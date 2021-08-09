@@ -1,9 +1,10 @@
 // Mongoose Connection
-const mongoose = require("mongoose")
-require("dotenv").config()
+const mongoose = require("mongoose");
+require("dotenv").config();
 
 const express = require("express");
 const { db } = require("./models/Message");
+const Message = require("./models/Message");
 const app = express();
 
 // this is important even tho its not specfically used.
@@ -15,17 +16,17 @@ const PORT = 8000;
 const url = process.env.MONGODB_URL;
 mongoose.connect(url, {
 	useNewUrlParser: true,
-	useUnifiedTopology: true
-})
+	useUnifiedTopology: true,
+});
 
 // check for DB connection
 db.once("open", function () {
-	console.log("Connected to MongoDB successfully!")
-})
+	console.log("Connected to MongoDB successfully!");
+});
 
 db.on("error", function () {
-	console.log(err)
-})
+	console.log(err);
+});
 
 app.get("/", (req, res) => {
 	// server health check on the localhost port
@@ -36,13 +37,26 @@ app.get("/", (req, res) => {
 app.ws("/", function (ws, req) {
 	ws.on("message", function (msg) {
 		// received the message from React
-		console.log("Received:", msg);
+		let messageParse = JSON.parse(msg)
+		// to show the message we received from React
+		console.log("Message Received in Server:", messageParse)
+
 		// send the message back the React to visually confirm connection in React's console.logs
-		ws.send(msg)
+		ws.send(JSON.stringify(messageParse))
+
+		let convertResData = {
+			dateSent: messageParse.dateSent.toString(),
+			clientMessage: messageParse.clientMessage.toString(),
+		};
+
+		// insert data into DB
+		Message.create(convertResData, function (err) {
+			if (err) throw err;
+		});
 	});
 });
 
 // when the server starts this will run
 app.listen(PORT, () => {
-	console.log(`Server Opened on Port: ${PORT}`)
-})
+	console.log(`Server Opened on Port: ${PORT}`);
+});

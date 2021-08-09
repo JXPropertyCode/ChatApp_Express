@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 
 let messageSchema = mongoose.Schema({
-    message: String,
-    created: {
-        type: Date,
-        default: Date.now
-    }
-})
+	dateSent: String,
+	clientMessage: String,
+	created: {
+		type: Number,
+		default: Date.now(),
+	},
+});
 
-module.exports = mongoose.model("testCollection", messageSchema, "testCollection")
+module.exports = mongoose.model(
+	"messageCollection",
+	messageSchema,
+	"messageCollection"
+);
