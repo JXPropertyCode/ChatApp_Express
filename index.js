@@ -31,18 +31,28 @@ db.on("error", function () {
 app.get("/", (req, res) => {
 	// server health check on the localhost port
 	res.send("200 OK");
+
+	// this gets all the data from MongoDB and outputs it onto the local host
+	// Message.find({}, function (err,data) {
+	// 	if (err) {
+	// 		console.log(err)
+	// 	} else {
+	// 		console.log("Data from MongoDB:", data)
+	// 		res.json(data)
+	// 	}
+	// })
 });
 
 // the ws parameter is an instance of the WebSocket class
 app.ws("/", function (ws, req) {
 	ws.on("message", function (msg) {
 		// received the message from React
-		let messageParse = JSON.parse(msg)
+		let messageParse = JSON.parse(msg);
 		// to show the message we received from React
-		console.log("Message Received in Server:", messageParse)
+		console.log("Message Received in Server:", messageParse);
 
 		// send the message back the React to visually confirm connection in React's console.logs
-		ws.send(JSON.stringify(messageParse))
+		ws.send(JSON.stringify(messageParse));
 
 		let convertResData = {
 			dateSent: messageParse.dateSent.toString(),
@@ -53,6 +63,20 @@ app.ws("/", function (ws, req) {
 		Message.create(convertResData, function (err) {
 			if (err) throw err;
 		});
+
+		// let messageData = []
+		// Message.find({}, function (err, data) {
+		// 	if (err) {
+		// 		console.log(err);
+		// 	} else {
+		// 		console.log("Data from MongoDB:", data);
+		// 		// ws.send(JSON.stringify(messageParse));
+		// 		// res.json(data);
+		// 		messageData.push(JSON.stringify(data))
+		// 	}
+		// });
+		// console.log("Sending Total Message Data")
+		// ws.send(messageData);
 	});
 });
 
