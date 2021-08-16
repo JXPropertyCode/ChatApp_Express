@@ -63,10 +63,10 @@ app.ws("/echo", function (ws, req) {
 		// 	clientMessage: messageParse.clientMessage.toString(),
 		// };
 
-		// // insert data into DB
-		// Message.create(convertResData, function (err) {
-		// 	if (err) throw err;
-		// });
+		// insert data into DB
+		Message.create(convertResData, function (err) {
+			if (err) throw err;
+		});
 
 		// let messageData = []
 		// Message.find({}, function (err, data) {
