@@ -1,86 +1,42 @@
-// Mongoose Connection
-const mongoose = require("mongoose");
-require("dotenv").config();
-
 const express = require("express");
-const { db } = require("./models/Message");
-const Message = require("./models/Message");
+const http = require("http");
+const WebSocket = require("ws");
+
 const app = express();
 
-// this is important even tho its not specfically used.
-// express-ws needs to get a chance to set up support for Express routers
-// note: as before, the expressWs instantly runs the functions when it gets called during initialization
-const expressWs = require("express-ws")(app);
-const PORT = 8000;
+//initialize a simple http server
+const server = http.createServer(app);
 
-const url = process.env.MONGODB_URL;
-mongoose.connect(url, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
+//initialize the WebSocket server instance
+const wss = new WebSocket.Server({ server });
 
-// check for DB connection
-db.once("open", function () {
-	console.log("Connected to MongoDB successfully!");
-});
+wss.on("connection", (ws) => {
+	// console.log(wss.clients)
+	//connection is up, let's add a simple simple event
+	ws.on("message", (message) => {
+		//log the received message and send it back to the client
+		console.log("received: %s", message);
+		// ws.send(`Hello, you sent -> ${message}`);
 
-db.on("error", function () {
-	console.log(err);
-});
-
-app.get("/", (req, res) => {
-	// server health check on the localhost port
-	res.send("200 OK");
-
-	// this gets all the data from MongoDB and outputs it onto the local host
-	// Message.find({}, function (err,data) {
-	// 	if (err) {
-	// 		console.log(err)
-	// 	} else {
-	// 		console.log("Data from MongoDB:", data)
-	// 		res.json(data)
-	// 	}
-	// })
-});
-
-// the ws parameter is an instance of the WebSocket class
-app.ws("/", function (ws, req) {
-	ws.on("message", function (msg) {
-		// received the message from React
-		let messageParse = JSON.parse(msg);
-		// to show the message we received from React
-		console.log("Message Received in Server:", messageParse);
-
-		// send the message back the React to visually confirm connection in React's console.logs
-		ws.send(JSON.stringify(messageParse));
-
+		let messageParse = JSON.parse(message)
+		console.log("Message Sent from Server:", messageParse);
 		let convertResData = {
 			dateSent: messageParse.dateSent.toString(),
 			clientMessage: messageParse.clientMessage.toString(),
 		};
 
-		// insert data into DB
-		Message.create(convertResData, function (err) {
-			if (err) throw err;
-		});
 
-		// let messageData = []
-		// Message.find({}, function (err, data) {
-		// 	if (err) {
-		// 		console.log(err);
-		// 	} else {
-		// 		console.log("Data from MongoDB:", data);
-		// 		// ws.send(JSON.stringify(messageParse));
-		// 		// res.json(data);
-		// 		messageData.push(JSON.stringify(data))
-		// 	}
-		// });
-		// console.log("Sending Total Message Data")
-		// ws.send(messageData);
+
+		wss.clients.forEach((client) => {
+			client.send(JSON.stringify(convertResData));
+		});
 	});
+
+	//send immediatly a feedback to the incoming connection
+	ws.send("Hi there, I am a WebSocket server");
 });
 
-// when the server starts this will run
-app.listen(PORT, () => {
-	console.log(`Server Opened on Port: ${PORT}`);
+//start our server
+server.listen(process.env.PORT || 8000, () => {
+	console.log(`Server started on port ${server.address().port} :)`);
 });
