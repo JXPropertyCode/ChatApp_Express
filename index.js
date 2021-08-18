@@ -31,6 +31,21 @@ db.on("error", function () {
 	console.log(err);
 });
 
+app.get("/", (req, res) => {
+	// server health check on the localhost port
+	res.send("200 OK");
+
+	// this gets all the data from MongoDB and outputs it onto the local host
+	// Message.find({}, function (err,data) {
+	// 	if (err) {
+	// 		console.log(err)
+	// 	} else {
+	// 		console.log("Data from MongoDB:", data)
+	// 		res.json(data)
+	// 	}
+	// })
+});
+
 wss.on("connection", (ws) => {
 	// console.log(wss.clients)
 	//connection is up, let's add a simple simple event
