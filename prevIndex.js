@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const express = require("express");
-const { db } = require("./models/Message");
-const Message = require("./models/Message");
+const { db } = require("./models/MessageObject");
+const Message = require("./models/MessageObject");
 const app = express();
 
 // this is important even tho its not specfically used.

@@ -58,7 +58,7 @@ app.get("/signup", (req, res) => {
 app.post("/signup", (req, res) => {
 	// res.send("200 OK");
 
-	console.log("Inside Account Creation...");
+	console.log("Inside Account Validation...");
 	let reqData = req.body;
 
 	let convertReqData = {
@@ -86,14 +86,37 @@ app.post("/signup", (req, res) => {
 			console.log("New Account Created:", reqData);
 		}
 	});
+});
 
-	// res.send({validCred: 'true'})
+app.get("/login-validation", (req, res) => {
+	res.send("200 OK");
+	// const createAccount = new Account
+});
 
-	// if email is unique
-	// res.send({validCred: 'true'})
+app.post("/login-validation", (req, res) => {
+	// res.send("200 OK");
 
-	// if email is not unique and is used
-	// res.status(404).json('error logging in');
+	console.log("Inside Login Validation...");
+	let reqData = req.body;
+
+	// finding the email that is being requested to create an account
+	Account.find(
+		{ email: reqData.email, password: reqData.password },
+		function (err, data) {
+			if (err) {
+				console.log(err);
+			}
+
+			if (data.length > 0) {
+				res.send({ validCred: "true" });
+				console.log("Account Found:", reqData);
+			} else {
+				// insert into MongoDB
+				res.send({ validCred: "false" });
+				console.log("Account NOT Found:", reqData);
+			}
+		}
+	);
 });
 
 wss.on("connection", (ws) => {
