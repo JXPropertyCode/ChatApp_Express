@@ -3,12 +3,16 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const http = require("http");
 const WebSocket = require("ws");
-const { db } = require("./models/Message");
-const Message = require("./models/Message");
+const { db } = require("./models/MessageObject");
+const Message = require("./models/MessageObject");
+const Account = require("./models/AccountObject");
 
 const app = express();
+app.use(express.json());
+app.use(cors("*"));
 
 //initialize a simple http server
 const server = http.createServer(app);
@@ -44,6 +48,52 @@ app.get("/", (req, res) => {
 	// 		res.json(data)
 	// 	}
 	// })
+});
+
+app.get("/signup", (req, res) => {
+	res.send("200 OK");
+	// const createAccount = new Account
+});
+
+app.post("/signup", (req, res) => {
+	// res.send("200 OK");
+
+	console.log("Inside Account Creation...");
+	let reqData = req.body;
+
+	let convertReqData = {
+		username: String(reqData.username),
+		email: String(reqData.email),
+		password: String(reqData.password),
+		timestamp: String(reqData.timestamp),
+	};
+
+	// finding the email that is being requested to create an account
+	Account.find({ email: reqData.email }, function (err, data) {
+		if (err) {
+			console.log(err);
+		}
+
+		if (data.length > 0) {
+			res.send({ validCred: "false" });
+			console.log("Email Already Taken");
+		} else {
+			// insert into MongoDB
+			res.send({ validCred: "true" });
+			Account.create(convertReqData, function (err) {
+				if (err) throw err;
+			});
+			console.log("New Account Created:", reqData);
+		}
+	});
+
+	// res.send({validCred: 'true'})
+
+	// if email is unique
+	// res.send({validCred: 'true'})
+
+	// if email is not unique and is used
+	// res.status(404).json('error logging in');
 });
 
 wss.on("connection", (ws) => {
