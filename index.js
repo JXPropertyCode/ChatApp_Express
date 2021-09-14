@@ -108,7 +108,7 @@ app.post("/login-validation", (req, res) => {
 			}
 
 			if (data.length > 0) {
-				res.send({ validCred: "true" });
+				res.send({ validCred: "true", username: data[0].username });
 				console.log("Account Found:", reqData);
 			} else {
 				// insert into MongoDB
@@ -127,8 +127,12 @@ wss.on("connection", (ws) => {
 		let messageParse = JSON.parse(message);
 		console.log("Received from Client:", messageParse);
 
+		// validated username and password
 		let convertResData = {
-			dateSent: messageParse.dateSent.toString(),
+			username: messageParse.username.toString(),
+			email: messageParse.email.toString(),
+			password: messageParse.password.toString(),
+			dateSent: messageParse.timestamp.toString(),
 			clientMessage: messageParse.clientMessage.toString(),
 		};
 

@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 let messageSchema = mongoose.Schema({
 	username: String,
+	email: String,
+	password: String,
 	dateSent: String,
 	clientMessage: String,
 	created: {
