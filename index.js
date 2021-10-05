@@ -50,6 +50,18 @@ app.get("/", (req, res) => {
 	// })
 });
 
+app.get("/messages", (req, res) => {
+	// this gets all the data from MongoDB and outputs it onto the local host
+	Message.find({}, function (err,data) {
+		if (err) {
+			console.log(err)
+		} else {
+			console.log("Data from MongoDB:", data)
+			res.json(data)
+		}
+	})
+})
+
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
 	// const createAccount = new Account
@@ -129,6 +141,7 @@ wss.on("connection", (ws) => {
 
 		// validated username and password
 		let convertResData = {
+			room_id: messageParse.room_id.toString(),
 			username: messageParse.username.toString(),
 			email: messageParse.email.toString(),
 			password: messageParse.password.toString(),
