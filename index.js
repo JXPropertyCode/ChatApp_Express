@@ -74,6 +74,7 @@ app.post("/signup", (req, res) => {
 	let reqData = req.body;
 
 	let convertReqData = {
+		userID: String(reqData.userID),
 		username: String(reqData.username),
 		email: String(reqData.email),
 		password: String(reqData.password),
