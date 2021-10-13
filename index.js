@@ -144,7 +144,7 @@ wss.on("connection", (ws) => {
 
 		// validated username and password
 		let convertResData = {
-			room_id: messageParse.room_id.toString(),
+			roomID: messageParse.roomID.toString(),
 			userID: messageParse.userID.toString(),
 			username: messageParse.username.toString(),
 			email: messageParse.email.toString(),
