@@ -73,6 +73,8 @@ app.post("/signup", (req, res) => {
 	console.log("Inside Account Validation...");
 	let reqData = req.body;
 
+	console.log("SignUp reqData:", reqData)
+
 	let convertReqData = {
 		userID: String(reqData.userID),
 		username: String(reqData.username),
@@ -121,7 +123,7 @@ app.post("/login-validation", (req, res) => {
 			}
 
 			if (data.length > 0) {
-				res.send({ validCred: "true", username: data[0].username });
+				res.send({ validCred: "true", username: data[0].username, userID: data[0].userID });
 				console.log("Account Found:", reqData);
 			} else {
 				// insert into MongoDB
@@ -143,6 +145,7 @@ wss.on("connection", (ws) => {
 		// validated username and password
 		let convertResData = {
 			room_id: messageParse.room_id.toString(),
+			userID: messageParse.userID.toString(),
 			username: messageParse.username.toString(),
 			email: messageParse.email.toString(),
 			password: messageParse.password.toString(),
