@@ -52,15 +52,15 @@ app.get("/", (req, res) => {
 
 app.get("/messages", (req, res) => {
 	// this gets all the data from MongoDB and outputs it onto the local host
-	Message.find({}, function (err,data) {
+	Message.find({}, function (err, data) {
 		if (err) {
-			console.log(err)
+			console.log(err);
 		} else {
-			console.log("Data from MongoDB:", data)
-			res.json(data)
+			console.log("Data from MongoDB:", data);
+			res.json(data);
 		}
-	})
-})
+	});
+});
 
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
@@ -73,10 +73,11 @@ app.post("/signup", (req, res) => {
 	console.log("Inside Account Validation...");
 	let reqData = req.body;
 
-	console.log("SignUp reqData:", reqData)
+	console.log("SignUp reqData:", reqData);
 
 	let convertReqData = {
 		userID: String(reqData.userID),
+		chatrooms: new Array(...reqData.chatrooms),
 		username: String(reqData.username),
 		email: String(reqData.email),
 		password: String(reqData.password),
@@ -98,7 +99,10 @@ app.post("/signup", (req, res) => {
 			Account.create(convertReqData, function (err) {
 				if (err) throw err;
 			});
-			console.log("New Account Created:", reqData);
+			console.log(
+				"New Account Created using convertReqData:",
+				convertReqData
+			);
 		}
 	});
 });
@@ -123,7 +127,12 @@ app.post("/login-validation", (req, res) => {
 			}
 
 			if (data.length > 0) {
-				res.send({ validCred: "true", username: data[0].username, userID: data[0].userID });
+				res.send({
+					validCred: "true",
+					username: data[0].username,
+					userID: data[0].userID,
+					chatrooms: data[0].chatrooms,
+				});
 				console.log("Account Found:", reqData);
 			} else {
 				// insert into MongoDB
