@@ -6,9 +6,12 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const WebSocket = require("ws");
-const { db } = require("./models/MessageObject");
+//const { db } = require("./models/MessageObject");
 const Message = require("./models/MessageObject");
 const Account = require("./models/AccountObject");
+
+let db = Message.db
+let db2 = Account.db
 
 const app = express();
 app.use(express.json());
@@ -21,19 +24,28 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const url = process.env.MONGODB_URL;
+
 mongoose.connect(url, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
 
-// check for DB connection
-db.once("open", function () {
-	console.log("Connected to MongoDB successfully!");
-});
+mongoose.connection
+    .once('open', function () {
+      console.log('MongoDB running');
+    })
+    .on('error', function (err) {
+      console.log(err);
+    });
 
-db.on("error", function () {
-	console.log(err);
-});
+// check for DB connection
+// db.once("open", function () {
+// 	console.log("Connected to MongoDB successfully!");
+// });
+
+// db.on("error", function () {
+// 	console.log(err);
+// });
 
 app.get("/", (req, res) => {
 	// server health check on the localhost port
@@ -56,7 +68,7 @@ app.get("/messages", (req, res) => {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log("Data from MongoDB:", data);
+			// console.log("Data from MongoDB:", data);
 			res.json(data);
 		}
 	});
@@ -64,7 +76,6 @@ app.get("/messages", (req, res) => {
 
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
-	// const createAccount = new Account
 });
 
 app.post("/signup", (req, res) => {
@@ -141,6 +152,53 @@ app.post("/login-validation", (req, res) => {
 			}
 		}
 	);
+});
+
+app.get("/create-chatroom", (req, res) => {
+	res.send("200 OK");
+	// const createAccount = new Account
+});
+
+app.post("/create-chatroom", (req, res) => {
+	// res.send("200 OK");
+
+	console.log("Inside Create Chatroom...");
+	let reqData = req.body;
+
+	// finding the email that is being requested to create an account
+
+	function createChatRoom(err, data) {
+		if (err) {
+			console.log(err);
+		}
+
+		Account.find(
+			{ email: reqData.email, password: reqData.password },
+			async function (err, data) {
+				if (err) {
+					console.log(err);
+				}
+	
+				if (data.length > 0) {
+					res.send({
+						validCred: "true",
+					});
+					
+					// inserting a string into the chatrooms array inside the accountCollection of mongodb
+					Account.findByIdAndUpdate({_id: data[0]._id}, {"$push": {"chatrooms": reqData.chatroomName}}).then(res => console.log("res:", res)).catch(err => console.log("err:", err));
+
+				} else {
+					res.send({ validCred: "false" });
+					console.log("Account NOT Found, Cannot Update:", reqData);
+				}
+			}
+		);
+		console.log("reqData:", reqData);
+
+
+	};
+
+	createChatRoom();
 });
 
 wss.on("connection", (ws) => {

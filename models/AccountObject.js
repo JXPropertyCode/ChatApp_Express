@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 let accountSchema = mongoose.Schema({
 	userID: String,
-	chatrooms: Array,
+	chatrooms: [String],
     username: String,
     email: String,
     password: String,
