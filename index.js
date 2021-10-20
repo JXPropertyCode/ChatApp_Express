@@ -6,12 +6,9 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const WebSocket = require("ws");
-//const { db } = require("./models/MessageObject");
 const Message = require("./models/MessageObject");
 const Account = require("./models/AccountObject");
-
-let db = Message.db
-let db2 = Account.db
+const Chatroom = require("./models/ChatroomObject");
 
 const app = express();
 app.use(express.json());
@@ -30,22 +27,14 @@ mongoose.connect(url, {
 	useUnifiedTopology: true,
 });
 
-mongoose.connection
-    .once('open', function () {
-      console.log('MongoDB running');
-    })
-    .on('error', function (err) {
-      console.log(err);
-    });
-
 // check for DB connection
-// db.once("open", function () {
-// 	console.log("Connected to MongoDB successfully!");
-// });
-
-// db.on("error", function () {
-// 	console.log(err);
-// });
+mongoose.connection
+	.once("open", function () {
+		console.log("MongoDB running");
+	})
+	.on("error", function (err) {
+		console.log(err);
+	});
 
 app.get("/", (req, res) => {
 	// server health check on the localhost port
@@ -79,15 +68,13 @@ app.get("/signup", (req, res) => {
 });
 
 app.post("/signup", (req, res) => {
-	// res.send("200 OK");
-
 	console.log("Inside Account Validation...");
 	let reqData = req.body;
 
 	console.log("SignUp reqData:", reqData);
 
 	let convertReqData = {
-		userID: String(reqData.userID),
+		// userID: String(reqData.userID),
 		chatrooms: new Array(...reqData.chatrooms),
 		username: String(reqData.username),
 		email: String(reqData.email),
@@ -120,12 +107,9 @@ app.post("/signup", (req, res) => {
 
 app.get("/login-validation", (req, res) => {
 	res.send("200 OK");
-	// const createAccount = new Account
 });
 
 app.post("/login-validation", (req, res) => {
-	// res.send("200 OK");
-
 	console.log("Inside Login Validation...");
 	let reqData = req.body;
 
@@ -137,11 +121,13 @@ app.post("/login-validation", (req, res) => {
 				console.log(err);
 			}
 
-			if (data.length > 0) {
+			console.log("data[0]:", data[0])
+
+			if (data.length === 1) {
 				res.send({
 					validCred: "true",
 					username: data[0].username,
-					userID: data[0].userID,
+					userID: data[0]._id,
 					chatrooms: data[0].chatrooms,
 				});
 				console.log("Account Found:", reqData);
@@ -156,47 +142,87 @@ app.post("/login-validation", (req, res) => {
 
 app.get("/create-chatroom", (req, res) => {
 	res.send("200 OK");
-	// const createAccount = new Account
 });
 
 app.post("/create-chatroom", (req, res) => {
-	// res.send("200 OK");
-
 	console.log("Inside Create Chatroom...");
 	let reqData = req.body;
 
 	// finding the email that is being requested to create an account
-
 	function createChatRoom(err, data) {
 		if (err) {
 			console.log(err);
 		}
 
-		Account.find(
-			{ email: reqData.email, password: reqData.password },
-			async function (err, data) {
-				if (err) {
-					console.log(err);
-				}
-	
-				if (data.length > 0) {
-					res.send({
-						validCred: "true",
-					});
-					
-					// inserting a string into the chatrooms array inside the accountCollection of mongodb
-					Account.findByIdAndUpdate({_id: data[0]._id}, {"$push": {"chatrooms": reqData.chatroomName}}).then(res => console.log("res:", res)).catch(err => console.log("err:", err));
-
-				} else {
-					res.send({ validCred: "false" });
-					console.log("Account NOT Found, Cannot Update:", reqData);
-				}
+		Account.find({ _id: reqData.userID }, async function (err, data) {
+			if (err) {
+				throw err;
 			}
-		);
+
+			if (data.length === 1) {
+				res.send({
+					validCred: "true",
+				});
+
+				let convertReqData = {
+					creatorUserID: String(reqData.userID),
+					members: [reqData.userID],
+					timestamp: Number(reqData.timestamp),
+				};
+	
+				Chatroom.create(convertReqData, function (err, data) {
+					if (err) throw err;
+
+					console.log("Chatroom data:", data)
+
+
+					Account.findByIdAndUpdate(
+						{ _id: convertReqData.creatorUserID },
+						{ $push: { chatrooms: data._id } }
+					)
+						.then((res) => console.log("res:", res))
+						.catch((err) => console.log("err:", err));
+				});
+
+				// console.log("Chatroom Created:", result)
+
+				// inserting a string into the chatrooms array inside the accountCollection of mongodb
+				// Account.findByIdAndUpdate(
+				// 	{ _id: reqData.userID },
+				// 	{ $push: { chatrooms: reqData.chatroomName } }
+				// )
+				// 	.then((res) => console.log("res:", res))
+				// 	.catch((err) => console.log("err:", err));
+
+				// inserting a string into the chatrooms arracy inside the accountCollection of mongodb
+				// Account.findOneAndUpdate(
+				// 	{ _id: reqData.userID },
+				// 	{ $push: { chatrooms: reqData.chatroomName } }
+				// )
+				// 	.then((res) => console.log("res:", res))
+				// 	.catch((err) => console.log("err:", err));
+			} else {
+				res.send({ validCred: "false" });
+				console.log("Account NOT Found, Cannot Update:", reqData);
+			}
+
+			// let convertReqData = {
+			// 	creatorUserID: String(reqData.userID),
+			// 	members: [reqData.userID],
+			// 	timestamp: Number(reqData.timestamp),
+			// };
+
+			// Chatroom.create(convertReqData, function (err) {
+			// 	if (err) throw err;
+			// });
+
+			// console.log(
+			// 	"New Chatroom Created using convertReqData:",
+			// 	convertReqData
+			// );
+		});
 		console.log("reqData:", reqData);
-
-
-	};
+	}
 
 	createChatRoom();
 });
