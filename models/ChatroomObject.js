@@ -6,7 +6,7 @@ let chatroomSchema = mongoose.Schema({
     timestamp: Number,
 	created: {
 		type: Number,
-		default: Date.now(),
+		default: Date.now,
 	},
 });
 
