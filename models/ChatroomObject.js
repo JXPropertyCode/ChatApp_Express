@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 
 let chatroomSchema = mongoose.Schema({
 	creatorUserID: String,
+    chatroomName: String,
 	members: [String],
     timestamp: Number,
-	created: {
+	createdAt: {
 		type: Number,
 		default: Date.now,
 	},

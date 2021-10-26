@@ -8,7 +8,7 @@ let messageSchema = mongoose.Schema({
 	password: String,
 	timestamp: Number,
 	clientMessage: String,
-	created: {
+	createdAt: {
 		type: Number,
 		default: Date.now,
 	},

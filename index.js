@@ -63,6 +63,18 @@ app.get("/messages", (req, res) => {
 	});
 });
 
+app.get("/chatrooms", (req, res) => {
+	// this gets all the data from MongoDB and outputs it onto the local host
+	Chatroom.find({}, function (err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			// console.log("Data from MongoDB:", data);
+			res.json(data);
+		}
+	});
+});
+
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
 });
@@ -160,12 +172,10 @@ app.post("/create-chatroom", (req, res) => {
 			}
 
 			if (data.length === 1) {
-				res.send({
-					validCred: "true",
-				});
 
 				let convertReqData = {
 					creatorUserID: String(reqData.userID),
+					chatroomName: String(reqData.chatroomName),
 					members: [reqData.userID],
 					timestamp: Number(reqData.timestamp),
 				};
@@ -174,6 +184,12 @@ app.post("/create-chatroom", (req, res) => {
 					if (err) throw err;
 
 					console.log("Chatroom data:", data)
+					
+					
+					res.send({
+						validCred: "true",
+						chatroomCreated: data._id
+					});
 
 
 					Account.findByIdAndUpdate(
