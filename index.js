@@ -9,6 +9,7 @@ const WebSocket = require("ws");
 const Message = require("./models/MessageObject");
 const Account = require("./models/AccountObject");
 const Chatroom = require("./models/ChatroomObject");
+const { findOne } = require("./models/MessageObject");
 
 const app = express();
 app.use(express.json());
@@ -133,14 +134,13 @@ app.post("/login-validation", (req, res) => {
 				console.log(err);
 			}
 
-			console.log("data[0]:", data[0])
+			console.log("data[0]:", data[0]);
 
 			if (data.length === 1) {
 				res.send({
 					validCred: "true",
 					username: data[0].username,
 					userID: data[0]._id,
-					chatrooms: data[0].chatrooms,
 				});
 				console.log("Account Found:", reqData);
 			} else {
@@ -148,6 +148,73 @@ app.post("/login-validation", (req, res) => {
 				res.send({ validCred: "false" });
 				console.log("Account NOT Found:", reqData);
 			}
+		}
+	);
+});
+
+app.get("/user-chatroom-validation", (req, res) => {
+	res.send("200 OK");
+});
+
+app.post("/user-chatroom-validation", (req, res) => {
+	console.log("Inside User Chatroom Validation...");
+	let reqData = req.body;
+
+	// finding the email that is being requested to create an account
+	Account.find(
+		{ email: reqData.email, password: reqData.password },
+		function (err, data) {
+			if (err) {
+				console.log(err);
+				return err;
+			}
+
+			console.log("reqData:", reqData);
+			console.log("data[0].chatrooms:", data[0].chatrooms);
+
+			for (let i = 0; i < data[0].chatrooms.length; i++) {
+				console.log(reqData.reqChatroom, data[0].chatrooms[i]);
+				if (reqData.reqChatroom === data[0].chatrooms[i]) {
+					res.send({ auth: true });
+
+					return;
+					// return true;
+				}
+			}
+
+			console.log("Cannot find Chatroom");
+			res.send({ auth: false });
+			return;
+			// console.log("Sending data.chatrooms:", data[0].chatrooms)
+			// res.send(data[0].chatrooms);
+		}
+	);
+});
+
+app.get("/get-user-chatroom", (req, res) => {
+	res.send("200 OK");
+});
+
+app.post("/get-user-chatroom", (req, res) => {
+	console.log("Inside Get User Chatroom...");
+	let reqData = req.body;
+
+	// finding the email that is being requested to create an account
+	Account.find(
+		{ email: reqData.email, password: reqData.password },
+		function (err, data) {
+			if (err) {
+				console.log(err);
+				return err;
+			}
+
+			console.log("reqData:", reqData);
+			console.log("data[0].chatrooms:", data[0].chatrooms);
+
+			res.send({"chatrooms": data[0].chatrooms});
+			return;
+			// console.log("Sending data.chatrooms:", data[0].chatrooms)
+			// res.send(data[0].chatrooms);
 		}
 	);
 });
@@ -172,25 +239,22 @@ app.post("/create-chatroom", (req, res) => {
 			}
 
 			if (data.length === 1) {
-
 				let convertReqData = {
 					creatorUserID: String(reqData.userID),
 					chatroomName: String(reqData.chatroomName),
 					members: [reqData.userID],
 					timestamp: Number(reqData.timestamp),
 				};
-	
+
 				Chatroom.create(convertReqData, function (err, data) {
 					if (err) throw err;
 
-					console.log("Chatroom data:", data)
-					
-					
+					console.log("Chatroom data:", data);
+
 					res.send({
 						validCred: "true",
-						chatroomCreated: data._id
+						chatroomCreated: data._id,
 					});
-
 
 					Account.findByIdAndUpdate(
 						{ _id: convertReqData.creatorUserID },
@@ -267,7 +331,15 @@ wss.on("connection", (ws) => {
 		});
 
 		console.log("Message Sent to Client:", convertResData);
+
+		// chatroom findOne(roomid)
+		// chatroom.memeer.foreatch(client) => {
+
+		// }
+
+		// broadcast to clients
 		wss.clients.forEach((client) => {
+			console.log("Client:", client);
 			client.send(JSON.stringify(convertResData));
 		});
 	});
