@@ -5,29 +5,32 @@ async function filterMembers(reqData) {
 		addedMembers: [],
 		notAddedMembers: [],
 	};
+
 	for (let i = 0; i < reqData.addMembersList.length; i++) {
 		// using callbacks such as Account.find({}, () => {}). is already async. And would result in call back hell in this senario
 		let isUserFound = await Account.find({ _id: reqData.addMembersList[i] })
 			.then((data) => (data ? true : false))
 			.catch((err) => false);
+
 		if (isUserFound) {
 			memberStatus.addedMembers.push(reqData.addMembersList[i]);
 		} else {
 			memberStatus.notAddedMembers.push(reqData.addMembersList[i]);
 		}
 	}
-	console.log("After memberStatus:", memberStatus);
+	// console.log("After memberStatus:", memberStatus);
 	return memberStatus;
 }
 
-const AddUsersToChatroom = (req, res) => {
+const AddUsersToChatroom = async (req, res) => {
 	console.log("Inside Add Users to Chatroom...");
-	let reqData = req.body;
+	const reqData = req.body;
 
 	console.log("reqData:", reqData);
 
 	// finding the userId to add the user to the chatroom
-	filterMembers(reqData);
+	const memberChatroomStatus = await filterMembers(reqData);
+	console.log("memberChatroomStatus:", memberChatroomStatus)
 };
 
 module.exports = AddUsersToChatroom;
