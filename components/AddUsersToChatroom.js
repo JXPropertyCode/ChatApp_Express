@@ -8,19 +8,39 @@ async function filterMembers(reqData) {
 
 	for (let i = 0; i < reqData.addMembersList.length; i++) {
 		// using callbacks such as Account.find({}, () => {}). is already async. And would result in call back hell in this senario
+		// for loop wound run everything before it can update the memberStatus object
 		let isUserFound = await Account.find({ _id: reqData.addMembersList[i] })
 			.then((data) => (data ? true : false))
 			.catch((err) => false);
 
 		if (isUserFound) {
+			console.log("User Found:", reqData.addMembersList[i]);
 			memberStatus.addedMembers.push(reqData.addMembersList[i]);
+
+			// inside that specific user, it would add the chatroom to their accountCollection
+			Account.findByIdAndUpdate(
+				{ _id: reqData.addMembersList[i] },
+				{ $push: { chatrooms: reqData.currentChatroom } }
+			)
+				.then((res) => console.log("res:", res))
+				.catch((err) => console.log("err:", err));
+
+
 		} else {
+			console.log("User NOT Found:", reqData.addMembersList[i]);
 			memberStatus.notAddedMembers.push(reqData.addMembersList[i]);
 		}
 	}
 	// console.log("After memberStatus:", memberStatus);
 	return memberStatus;
 }
+
+// Account.findByIdAndUpdate(
+// 	{ _id: reqData.addMembersList[i] },
+// 	{ $push: { chatrooms: currentChatroom } }
+// )
+// 	.then((res) => console.log("res:", res))
+// 	.catch((err) => console.log("err:", err));
 
 const AddUsersToChatroom = async (req, res) => {
 	console.log("Inside Add Users to Chatroom...");
@@ -30,7 +50,7 @@ const AddUsersToChatroom = async (req, res) => {
 
 	// finding the userId to add the user to the chatroom
 	const memberChatroomStatus = await filterMembers(reqData);
-	console.log("memberChatroomStatus:", memberChatroomStatus)
+	console.log("memberChatroomStatus:", memberChatroomStatus);
 };
 
 module.exports = AddUsersToChatroom;
