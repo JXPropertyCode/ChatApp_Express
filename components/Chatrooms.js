@@ -10,6 +10,6 @@ const Chatrooms = (req, res) => {
 			res.json(data);
 		}
 	});
-}
+};
 
-module.exports = Chatrooms
+module.exports = Chatrooms;

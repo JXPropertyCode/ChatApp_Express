@@ -10,6 +10,6 @@ const Messages = (req, res) => {
 			return res.json(data);
 		}
 	});
-}
+};
 
-module.exports = Messages
+module.exports = Messages;

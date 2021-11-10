@@ -37,7 +37,6 @@ const VerifyAuthToAddUsersToChatroom = (req, res) => {
 	);
 
 	return;
-}
+};
 
-
-module.exports = VerifyAuthToAddUsersToChatroom
+module.exports = VerifyAuthToAddUsersToChatroom;

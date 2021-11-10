@@ -22,6 +22,6 @@ const GetUserChatroom = (req, res) => {
 			// res.send(data[0].chatrooms);
 		}
 	);
-}
+};
 
-module.exports = GetUserChatroom
+module.exports = GetUserChatroom;

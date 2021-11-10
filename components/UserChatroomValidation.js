@@ -33,6 +33,6 @@ const UserChatroomValidation = (req, res) => {
 			// res.send(data[0].chatrooms);
 		}
 	);
-}
+};
 
 module.exports = UserChatroomValidation;

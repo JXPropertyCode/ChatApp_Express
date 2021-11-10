@@ -1,7 +1,6 @@
 const Chatroom = require("../models/ChatroomObject");
 const Account = require("../models/AccountObject");
 
-
 const CreateChatroom = (req, res) => {
 	console.log("Inside Create Chatroom...");
 	let reqData = req.body;
@@ -84,9 +83,6 @@ const CreateChatroom = (req, res) => {
 	}
 
 	createChatRoom();
-}
+};
 
-
-
-
-module.exports = CreateChatroom
+module.exports = CreateChatroom;
