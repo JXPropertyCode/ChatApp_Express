@@ -9,7 +9,18 @@ const WebSocket = require("ws");
 const Message = require("./models/MessageObject");
 const Account = require("./models/AccountObject");
 const Chatroom = require("./models/ChatroomObject");
-const { findOne } = require("./models/MessageObject");
+// const { findOne } = require("./models/MessageObject");
+
+// functions that I use
+const Messages = require("./components/Messages");
+const Chatrooms = require("./components/Chatrooms");
+const Signup = require("./components/Signup");
+const LoginValidation = require('./components/LoginValidation')
+const UserChatroomValidation = require('./components/UserChatroomValidation')
+const GetUserChatroom = require('./components/GetUserChatroom')
+const VerifyAuthToAddUsersToChatroom = require('./components/VerifyAuthToAddUsersToChatroom')
+const CreateChatroom = require('./components/CreateChatroom')
+
 
 const app = express();
 app.use(express.json());
@@ -40,272 +51,118 @@ mongoose.connection
 app.get("/", (req, res) => {
 	// server health check on the localhost port
 	res.send("200 OK");
-
-	// this gets all the data from MongoDB and outputs it onto the local host
-	// Message.find({}, function (err,data) {
-	// 	if (err) {
-	// 		console.log(err)
-	// 	} else {
-	// 		console.log("Data from MongoDB:", data)
-	// 		res.json(data)
-	// 	}
-	// })
 });
 
-app.get("/messages", (req, res) => {
-	// this gets all the data from MongoDB and outputs it onto the local host
-	Message.find({}, function (err, data) {
-		if (err) {
-			console.log(err);
-		} else {
-			// console.log("Data from MongoDB:", data);
-			res.json(data);
-		}
-	});
-});
+app.get("/messages", Messages);
 
-app.get("/chatrooms", (req, res) => {
-	// this gets all the data from MongoDB and outputs it onto the local host
-	Chatroom.find({}, function (err, data) {
-		if (err) {
-			console.log(err);
-		} else {
-			// console.log("Data from MongoDB:", data);
-			res.json(data);
-		}
-	});
-});
+app.get("/chatrooms", Chatrooms);
 
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
 });
 
-app.post("/signup", (req, res) => {
-	console.log("Inside Account Validation...");
-	let reqData = req.body;
-
-	console.log("SignUp reqData:", reqData);
-
-	let convertReqData = {
-		// userID: String(reqData.userID),
-		chatrooms: new Array(...reqData.chatrooms),
-		username: String(reqData.username),
-		email: String(reqData.email),
-		password: String(reqData.password),
-		timestamp: String(reqData.timestamp),
-	};
-
-	// finding the email that is being requested to create an account
-	Account.find({ email: reqData.email }, function (err, data) {
-		if (err) {
-			console.log(err);
-		}
-
-		if (data.length > 0) {
-			res.send({ validCred: "false" });
-			console.log("Email Already Taken");
-		} else {
-			// insert into MongoDB
-			res.send({ validCred: "true" });
-			Account.create(convertReqData, function (err) {
-				if (err) throw err;
-			});
-			console.log(
-				"New Account Created using convertReqData:",
-				convertReqData
-			);
-		}
-	});
-});
+app.post("/signup", Signup);
 
 app.get("/login-validation", (req, res) => {
 	res.send("200 OK");
 });
 
-app.post("/login-validation", (req, res) => {
-	console.log("Inside Login Validation...");
-	let reqData = req.body;
-
-	// finding the email that is being requested to create an account
-	Account.find(
-		{ email: reqData.email, password: reqData.password },
-		function (err, data) {
-			if (err) {
-				console.log(err);
-			}
-
-			console.log("data[0]:", data[0]);
-
-			if (data.length === 1) {
-				res.send({
-					validCred: "true",
-					username: data[0].username,
-					userID: data[0]._id,
-				});
-				console.log("Account Found:", reqData);
-			} else {
-				// insert into MongoDB
-				res.send({ validCred: "false" });
-				console.log("Account NOT Found:", reqData);
-			}
-		}
-	);
-});
+app.post("/login-validation", LoginValidation);
 
 app.get("/user-chatroom-validation", (req, res) => {
 	res.send("200 OK");
 });
 
-app.post("/user-chatroom-validation", (req, res) => {
-	console.log("Inside User Chatroom Validation...");
-	let reqData = req.body;
-
-	// finding the email that is being requested to create an account
-	Account.find(
-		{ email: reqData.email, password: reqData.password },
-		function (err, data) {
-			if (err) {
-				console.log(err);
-				return err;
-			}
-
-			console.log("reqData:", reqData);
-			console.log("data[0].chatrooms:", data[0].chatrooms);
-
-			for (let i = 0; i < data[0].chatrooms.length; i++) {
-				console.log(reqData.reqChatroom, data[0].chatrooms[i]);
-				if (reqData.reqChatroom === data[0].chatrooms[i]) {
-					res.send({ auth: true });
-
-					return;
-					// return true;
-				}
-			}
-
-			console.log("Cannot find Chatroom");
-			res.send({ auth: false });
-			return;
-			// console.log("Sending data.chatrooms:", data[0].chatrooms)
-			// res.send(data[0].chatrooms);
-		}
-	);
-});
+app.post("/user-chatroom-validation", UserChatroomValidation);
 
 app.get("/get-user-chatroom", (req, res) => {
 	res.send("200 OK");
 });
 
-app.post("/get-user-chatroom", (req, res) => {
-	console.log("Inside Get User Chatroom...");
-	let reqData = req.body;
+app.post("/get-user-chatroom", GetUserChatroom);
 
-	// finding the email that is being requested to create an account
-	Account.find(
-		{ email: reqData.email, password: reqData.password },
-		function (err, data) {
-			if (err) {
-				console.log(err);
-				return err;
-			}
-
-			console.log("reqData:", reqData);
-			console.log("data[0].chatrooms:", data[0].chatrooms);
-
-			res.send({"chatrooms": data[0].chatrooms});
-			return;
-			// console.log("Sending data.chatrooms:", data[0].chatrooms)
-			// res.send(data[0].chatrooms);
-		}
-	);
+app.get("/verify-auth-to-add-users-to-chatroom", (req, res) => {
+	res.send("200 OK");
 });
+
+app.post("/verify-auth-to-add-users-to-chatroom", VerifyAuthToAddUsersToChatroom);
+
+app.get("/add-users-to-chatroom", (req, res) => {
+	res.send("200 OK");
+});
+
+// PROBLEM WITH ASYNC 
+// app.post("/add-users-to-chatroom", (req, res) => {
+// 	console.log("Inside Add Users to Chatroom...");
+// 	let reqData = req.body;
+
+// 	console.log("reqData:", reqData);
+
+// 	// finding the userId to add the user to the chatroom
+
+// 	let memberStatus = {
+// 		addedMembers: [],
+// 		notAddedMembers: [],
+// 	};
+
+// 	async function filterMembers() {
+// 		await reqData.addMembersList.forEach( async (members) => {
+// 			console.log("Members:", members);
+// 			try {
+// 				Account.find({ _id: members }, function (err, data) {
+// 					if (err) {
+// 						console.log(err);
+// 						res.send({ errorMessage: "This isn't a valid input." });
+// 						return err;
+// 					}
+
+// 					// console.log("data[0]:", data[0]);
+
+// 					if (data.length === 1) {
+// 						// res.send({
+// 						// 	validCred: "true",
+// 						// });
+// 						console.log("Account Found:", data[0]);
+
+// 						memberStatus.addedMembers = [
+// 							...memberStatus.addedMembers,
+// 							members,
+// 						];
+// 						console.log("memberStatus:", memberStatus);
+// 					} else {
+// 						// res.send({ validCred: "false" });
+// 						console.log("Account NOT Found:");
+// 						memberStatus.notAddedMembers = [
+// 							...memberStatus.notAddedMembers,
+// 							members,
+// 						];
+// 						console.log("memberStatus:", memberStatus);
+// 					}
+// 					return;
+// 				});
+// 			} catch (error) {
+// 				console.error(error);
+// 			}
+// 		});
+// 		console.log("Before memberStatus:", memberStatus);
+// 		return memberStatus;
+// 	}
+
+// 	const result = filterMembers().then((result) => {
+// 		console.log("Final memberStatus:", result);
+
+// 		return result;
+// 	});
+
+// 	// console.log("Final memberStatus:", filterMembers().then((result) => result));
+// 	// return memberStatus;
+// });
 
 app.get("/create-chatroom", (req, res) => {
 	res.send("200 OK");
 });
 
-app.post("/create-chatroom", (req, res) => {
-	console.log("Inside Create Chatroom...");
-	let reqData = req.body;
-
-	// finding the email that is being requested to create an account
-	function createChatRoom(err, data) {
-		if (err) {
-			console.log(err);
-		}
-
-		Account.find({ _id: reqData.userID }, async function (err, data) {
-			if (err) {
-				throw err;
-			}
-
-			if (data.length === 1) {
-				let convertReqData = {
-					creatorUserID: String(reqData.userID),
-					chatroomName: String(reqData.chatroomName),
-					members: [reqData.userID],
-					timestamp: Number(reqData.timestamp),
-				};
-
-				Chatroom.create(convertReqData, function (err, data) {
-					if (err) throw err;
-
-					console.log("Chatroom data:", data);
-
-					res.send({
-						validCred: "true",
-						chatroomCreated: data._id,
-					});
-
-					Account.findByIdAndUpdate(
-						{ _id: convertReqData.creatorUserID },
-						{ $push: { chatrooms: data._id } }
-					)
-						.then((res) => console.log("res:", res))
-						.catch((err) => console.log("err:", err));
-				});
-
-				// console.log("Chatroom Created:", result)
-
-				// inserting a string into the chatrooms array inside the accountCollection of mongodb
-				// Account.findByIdAndUpdate(
-				// 	{ _id: reqData.userID },
-				// 	{ $push: { chatrooms: reqData.chatroomName } }
-				// )
-				// 	.then((res) => console.log("res:", res))
-				// 	.catch((err) => console.log("err:", err));
-
-				// inserting a string into the chatrooms arracy inside the accountCollection of mongodb
-				// Account.findOneAndUpdate(
-				// 	{ _id: reqData.userID },
-				// 	{ $push: { chatrooms: reqData.chatroomName } }
-				// )
-				// 	.then((res) => console.log("res:", res))
-				// 	.catch((err) => console.log("err:", err));
-			} else {
-				res.send({ validCred: "false" });
-				console.log("Account NOT Found, Cannot Update:", reqData);
-			}
-
-			// let convertReqData = {
-			// 	creatorUserID: String(reqData.userID),
-			// 	members: [reqData.userID],
-			// 	timestamp: Number(reqData.timestamp),
-			// };
-
-			// Chatroom.create(convertReqData, function (err) {
-			// 	if (err) throw err;
-			// });
-
-			// console.log(
-			// 	"New Chatroom Created using convertReqData:",
-			// 	convertReqData
-			// );
-		});
-		console.log("reqData:", reqData);
-	}
-
-	createChatRoom();
-});
+app.post("/create-chatroom", CreateChatroom);
 
 wss.on("connection", (ws) => {
 	// console.log(wss.clients)
