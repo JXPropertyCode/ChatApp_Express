@@ -15,17 +15,37 @@ async function filterMembers(reqData) {
 
 		if (isUserFound) {
 			console.log("User Found:", reqData.addMembersList[i]);
-			memberStatus.addedMembers.push(reqData.addMembersList[i]);
+			// memberStatus.addedMembers.push(reqData.addMembersList[i]);
 
-			// inside that specific user, it would add the chatroom to their accountCollection
-			Account.findByIdAndUpdate(
-				{ _id: reqData.addMembersList[i] },
-				{ $push: { chatrooms: reqData.currentChatroom } }
-			)
-				.then((res) => console.log("res:", res))
-				.catch((err) => console.log("err:", err));
+			// if the account already has this chatroom, don't add it
+			await Account.find({
+				_id: reqData.addMembersList[i],
+				chatrooms: { $all: reqData.currentChatroom },
+			})
+				.then((data) => {
+					if (data.length === 1) {
+						console.log(
+							"Chatroom Already Exists In This Account..."
+						);
+						memberStatus.notAddedMembers.push(
+							reqData.addMembersList[i]
+						);
+					} else {
+						console.log("Chatroom Being Added to This Account...");
+						memberStatus.addedMembers.push(
+							reqData.addMembersList[i]
+						);
 
-
+						// inside that specific user, it would add the chatroom to their accountCollection
+						Account.findByIdAndUpdate(
+							{ _id: reqData.addMembersList[i] },
+							{ $push: { chatrooms: reqData.currentChatroom } }
+						)
+							.then((res) => console.log("res:", res))
+							.catch((err) => console.log("err:", err));
+					}
+				})
+				.catch((err) => err);
 		} else {
 			console.log("User NOT Found:", reqData.addMembersList[i]);
 			memberStatus.notAddedMembers.push(reqData.addMembersList[i]);
