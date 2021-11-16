@@ -14,6 +14,7 @@ const Chatroom = require("./models/ChatroomObject");
 // functions that I use
 const Messages = require("./components/Messages");
 const Chatrooms = require("./components/Chatrooms");
+const Users = require("./components/Users");
 const Signup = require("./components/Signup");
 const LoginValidation = require("./components/LoginValidation");
 const UserChatroomValidation = require("./components/UserChatroomValidation");
@@ -56,6 +57,8 @@ app.get("/", (req, res) => {
 app.get("/messages", Messages);
 
 app.get("/chatrooms", Chatrooms);
+
+app.get("/users", Users);
 
 app.get("/signup", (req, res) => {
 	res.send("200 OK");
