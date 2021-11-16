@@ -97,7 +97,7 @@ app.get("/add-users-to-chatroom", (req, res) => {
 	res.send("200 OK");
 });
 
-// PROBLEM WITH ASYNC
+// PROBLEM WITH ASYNC when using Callbacks
 app.post("/add-users-to-chatroom", AddUsersToChatroom);
 
 app.get("/create-chatroom", (req, res) => {

@@ -1,4 +1,6 @@
 const Account = require("../models/AccountObject");
+const Chatroom = require("../models/ChatroomObject");
+
 
 async function filterMembers(reqData) {
 	let memberStatus = {
@@ -40,6 +42,14 @@ async function filterMembers(reqData) {
 						Account.findByIdAndUpdate(
 							{ _id: reqData.addMembersList[i] },
 							{ $push: { chatrooms: reqData.currentChatroom } }
+						)
+							.then((res) => console.log("res:", res))
+							.catch((err) => console.log("err:", err));
+
+						// inside that specific chatroom, it would also add the user to the chatroomCollection's member array
+						Chatroom.findByIdAndUpdate(
+							{ _id: reqData.currentChatroom },
+							{ $push: { members: reqData.addMembersList[i] } }
 						)
 							.then((res) => console.log("res:", res))
 							.catch((err) => console.log("err:", err));
