@@ -23,6 +23,7 @@ const VerifyAuthToAddUsersToChatroom = require("./components/VerifyAuthToAddUser
 const AddUsersToChatroom = require("./components/AddUsersToChatroom");
 const CreateChatroom = require("./components/CreateChatroom");
 const GetChatroomMembers = require('./components/GetChatroomMembers')
+const LeaveChatroom = require('./components/LeaveChatroom')
 
 const app = express();
 app.use(express.json());
@@ -113,6 +114,11 @@ app.get("/get-chatroom-members", (req, res) => {
 
 app.post("/get-chatroom-members", GetChatroomMembers);
 
+app.get("/leave-chatroom", (req, res) => {
+	res.send("200 OK");
+});
+
+app.post("/leave-chatroom", LeaveChatroom);
 
 wss.on("connection", (ws) => {
 	// console.log(wss.clients)
