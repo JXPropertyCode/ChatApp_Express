@@ -20,7 +20,6 @@ const GetChatroomMembers = async (req, res) => {
   console.log("chatroomData:", chatroomData);
 
   if (chatroomData.length === 1) {
-
     // if chatroom exists, find the _id of the members then get their user name then send it back to React to output it
     for (let i = 0; i < chatroomData[0].members.length; i++) {
       await Account.find({ _id: chatroomData[0].members[i] })
