@@ -22,8 +22,9 @@ const GetUserChatroom = require("./components/GetUserChatroom");
 const VerifyAuthToAddUsersToChatroom = require("./components/VerifyAuthToAddUsersToChatroom");
 const AddUsersToChatroom = require("./components/AddUsersToChatroom");
 const CreateChatroom = require("./components/CreateChatroom");
-const GetChatroomMembers = require('./components/GetChatroomMembers')
-const LeaveChatroom = require('./components/LeaveChatroom')
+const GetChatroomMembers = require("./components/GetChatroomMembers");
+const LeaveChatroom = require("./components/LeaveChatroom");
+const ChangeUsername = require("./components/ChangeUsername");
 
 const app = express();
 app.use(express.json());
@@ -38,22 +39,22 @@ const wss = new WebSocket.Server({ server });
 const url = process.env.MONGODB_URL;
 
 mongoose.connect(url, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 // check for DB connection
 mongoose.connection
-	.once("open", function () {
-		console.log("MongoDB running");
-	})
-	.on("error", function (err) {
-		console.log(err);
-	});
+  .once("open", function () {
+    console.log("MongoDB running");
+  })
+  .on("error", function (err) {
+    console.log(err);
+  });
 
 app.get("/", (req, res) => {
-	// server health check on the localhost port
-	res.send("200 OK");
+  // server health check on the localhost port
+  res.send("200 OK");
 });
 
 app.get("/messages", Messages);
@@ -63,105 +64,107 @@ app.get("/chatrooms", Chatrooms);
 app.get("/users", Users);
 
 app.get("/signup", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/signup", Signup);
 
 app.get("/login-validation", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/login-validation", LoginValidation);
 
 app.get("/user-chatroom-validation", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/user-chatroom-validation", UserChatroomValidation);
 
 app.get("/get-user-chatroom", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/get-user-chatroom", GetUserChatroom);
 
 app.get("/verify-auth-to-add-users-to-chatroom", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post(
-	"/verify-auth-to-add-users-to-chatroom",
-	VerifyAuthToAddUsersToChatroom
+  "/verify-auth-to-add-users-to-chatroom",
+  VerifyAuthToAddUsersToChatroom
 );
 
 app.get("/add-users-to-chatroom", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 // PROBLEM WITH ASYNC when using Callbacks
 app.post("/add-users-to-chatroom", AddUsersToChatroom);
 
 app.get("/create-chatroom", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/create-chatroom", CreateChatroom);
 
 app.get("/get-chatroom-members", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/get-chatroom-members", GetChatroomMembers);
 
 app.get("/leave-chatroom", (req, res) => {
-	res.send("200 OK");
+  res.send("200 OK");
 });
 
 app.post("/leave-chatroom", LeaveChatroom);
 
+app.post("/change-username", ChangeUsername);
+
 wss.on("connection", (ws) => {
-	// console.log(wss.clients)
-	//connection is up, let's add a simple simple event
-	ws.on("message", (message) => {
-		// log the received message and send it back to the client
-		let messageParse = JSON.parse(message);
-		console.log("Received from Client:", messageParse);
+  // console.log(wss.clients)
+  //connection is up, let's add a simple simple event
+  ws.on("message", (message) => {
+    // log the received message and send it back to the client
+    let messageParse = JSON.parse(message);
+    console.log("Received from Client:", messageParse);
 
-		// validated username and password
-		let convertResData = {
-			roomID: messageParse.roomID.toString(),
-			userID: messageParse.userID.toString(),
-			username: messageParse.username.toString(),
-			email: messageParse.email.toString(),
-			password: messageParse.password.toString(),
-			timestamp: Number(messageParse.timestamp),
-			clientMessage: messageParse.clientMessage.toString(),
-		};
+    // validated username and password
+    let convertResData = {
+      roomID: messageParse.roomID.toString(),
+      userID: messageParse.userID.toString(),
+      username: messageParse.username.toString(),
+      email: messageParse.email.toString(),
+      password: messageParse.password.toString(),
+      timestamp: Number(messageParse.timestamp),
+      clientMessage: messageParse.clientMessage.toString(),
+    };
 
-		Message.create(convertResData, function (err) {
-			if (err) throw err;
-		});
+    Message.create(convertResData, function (err) {
+      if (err) throw err;
+    });
 
-		console.log("Message Sent to Client:", convertResData);
+    console.log("Message Sent to Client:", convertResData);
 
-		// chatroom findOne(roomid)
-		// chatroom.memeer.foreatch(client) => {
+    // chatroom findOne(roomid)
+    // chatroom.memeer.foreatch(client) => {
 
-		// }
+    // }
 
-		// broadcast to clients
-		wss.clients.forEach((client) => {
-			console.log("Client:", client);
-			client.send(JSON.stringify(convertResData));
-		});
-	});
+    // broadcast to clients
+    wss.clients.forEach((client) => {
+      console.log("Client:", client);
+      client.send(JSON.stringify(convertResData));
+    });
+  });
 
-	//send immediatly a feedback to the incoming connection
-	// ws.send("Hi there, I am a WebSocket server");
+  //send immediatly a feedback to the incoming connection
+  // ws.send("Hi there, I am a WebSocket server");
 });
 
 //start our server
 server.listen(process.env.PORT || 8000, () => {
-	console.log(`Server started on port ${server.address().port} :)`);
+  console.log(`Server started on port ${server.address().port} :)`);
 });
