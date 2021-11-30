@@ -22,8 +22,7 @@ const Messages = (req, res) => {
     if (err) {
       console.log("err:", err);
     } else {
-      // console.log("Data from MongoDB:", data);
-	  console.log("Data Found in req.query.roomid:", data)
+      console.log("Data Found in req.query.roomid:", data);
       return res.json(data);
     }
   }).populate("userID");

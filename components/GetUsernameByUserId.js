@@ -10,11 +10,9 @@ const GetUsernameByUserId = async (req, res) => {
   })
     .then((data) => {
       console.log("data[0]:", data[0]);
-      res.send({username: data[0].username})
+      res.send({ username: data[0].username });
     })
     .catch((err) => err);
-
-  // res.send(userChatrooms)
 };
 
 module.exports = GetUsernameByUserId;
