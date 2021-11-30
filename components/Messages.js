@@ -26,7 +26,7 @@ const Messages = (req, res) => {
 	  console.log("Data Found in req.query.roomid:", data)
       return res.json(data);
     }
-  });
+  }).populate("userID");
 };
 
 module.exports = Messages;
