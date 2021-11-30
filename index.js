@@ -145,22 +145,47 @@ wss.on("connection", (ws) => {
       clientMessage: messageParse.clientMessage.toString(),
     };
 
-    Message.create(convertResData, function (err) {
-      if (err) throw err;
-    });
+    // this is for seeing if the message being sent is authentic and valid. Haven't tested this to see if its true
+    Account.find(
+      {
+        _id: convertResData.userID,
+        email: convertResData.email,
+        password: convertResData.password,
+      },
+      function (err, data) {
+        if (err) {
+          console.log("err:", err);
+          return err;
+        } else {
+          // console.log("Data from MongoDB:", data);
+          console.log("Data Found in req.query.roomid:", data);
 
-    console.log("Message Sent to Client:", convertResData);
+          Message.create(convertResData, function (err) {
+            if (err) throw err;
+          });
 
-    // chatroom findOne(roomid)
-    // chatroom.memeer.foreatch(client) => {
+          console.log("Message Sent to Client:", convertResData);
 
-    // }
+          // broadcast to clients
+          wss.clients.forEach((client) => {
+            // console.log("Client:", client);
+            client.send(JSON.stringify(convertResData));
+          });
+        }
+      }
+    );
 
-    // broadcast to clients
-    wss.clients.forEach((client) => {
-      console.log("Client:", client);
-      client.send(JSON.stringify(convertResData));
-    });
+    // Message.create(convertResData, function (err) {
+    //   if (err) throw err;
+    // });
+
+    // console.log("Message Sent to Client:", convertResData);
+
+    // // broadcast to clients
+    // wss.clients.forEach((client) => {
+    // //   console.log("Client:", client);
+    //   client.send(JSON.stringify(convertResData));
+    // });
   });
 
   //send immediatly a feedback to the incoming connection
