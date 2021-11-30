@@ -25,6 +25,7 @@ const CreateChatroom = require("./components/CreateChatroom");
 const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
+const GetUsernameByUserId = require("./components/GetUsernameByUserId");
 
 const app = express();
 app.use(express.json());
@@ -122,6 +123,8 @@ app.get("/leave-chatroom", (req, res) => {
 app.post("/leave-chatroom", LeaveChatroom);
 
 app.post("/change-username", ChangeUsername);
+
+app.post("/get-username-by-user-id", GetUsernameByUserId);
 
 wss.on("connection", (ws) => {
   // console.log(wss.clients)
