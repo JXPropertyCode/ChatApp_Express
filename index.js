@@ -1,6 +1,7 @@
 // Mongoose Connection
 const mongoose = require("mongoose");
 require("dotenv").config();
+const Schema = mongoose.Schema;
 
 const express = require("express");
 const cors = require("cors");
@@ -127,15 +128,25 @@ app.post("/change-username", ChangeUsername);
 app.post("/get-username-by-user-id", GetUsernameByUserId);
 
 wss.on("connection", (ws) => {
-  // console.log(wss.clients)
-  //connection is up, let's add a simple simple event
+  console.log("wss.clients:", wss.clients)
+  // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
     // log the received message and send it back to the client
     let messageParse = JSON.parse(message);
     console.log("Received from Client:", messageParse);
 
+    // let convertResData = new Message(
+    //   messageParse.roomID.toString(),
+    //   messageParse.userID.toString(),
+    //   messageParse.username.toString(),
+    //   messageParse.email.toString(),
+    //   messageParse.password.toString(),
+    //   Number(messageParse.timestamp),
+    //   messageParse.clientMessage.toString()
+    // );
+
     // validated username and password
-    let convertResData = {
+    let convertResData = new Message({
       roomID: messageParse.roomID.toString(),
       userID: messageParse.userID.toString(),
       username: messageParse.username.toString(),
@@ -143,7 +154,7 @@ wss.on("connection", (ws) => {
       password: messageParse.password.toString(),
       timestamp: Number(messageParse.timestamp),
       clientMessage: messageParse.clientMessage.toString(),
-    };
+    });
 
     // this is for seeing if the message being sent is authentic and valid. Haven't tested this to see if its true
     Account.find(
@@ -160,16 +171,22 @@ wss.on("connection", (ws) => {
           // console.log("Data from MongoDB:", data);
           console.log("Data Found in req.query.roomid:", data);
 
-          Message.create(convertResData, function (err) {
+          Message.create(convertResData, function (err, newMessage) {
             if (err) throw err;
-          });
-
-          console.log("Message Sent to Client:", convertResData);
-
-          // broadcast to clients
-          wss.clients.forEach((client) => {
-            // console.log("Client:", client);
-            client.send(JSON.stringify(convertResData));
+            console.log("newMessage", newMessage);
+            Message.findById({ _id: newMessage._id }, function (err, data) {
+              if (err) {
+                console.log("err:", err);
+              } else {
+                // console.log("Data from MongoDB:", data);
+                console.log("Message Sent to Client:", data);
+                // broadcast to clients
+                wss.clients.forEach((client) => {
+                  // console.log("Client:", client);
+                  client.send(JSON.stringify(data));
+                });
+              }
+            }).populate("userID");
           });
         }
       }
