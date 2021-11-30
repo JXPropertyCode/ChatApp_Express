@@ -128,22 +128,12 @@ app.post("/change-username", ChangeUsername);
 app.post("/get-username-by-user-id", GetUsernameByUserId);
 
 wss.on("connection", (ws) => {
-  console.log("wss.clients:", wss.clients)
+  console.log("wss.clients:", wss.clients);
   // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
     // log the received message and send it back to the client
     let messageParse = JSON.parse(message);
     console.log("Received from Client:", messageParse);
-
-    // let convertResData = new Message(
-    //   messageParse.roomID.toString(),
-    //   messageParse.userID.toString(),
-    //   messageParse.username.toString(),
-    //   messageParse.email.toString(),
-    //   messageParse.password.toString(),
-    //   Number(messageParse.timestamp),
-    //   messageParse.clientMessage.toString()
-    // );
 
     // validated username and password
     let convertResData = new Message({
@@ -168,7 +158,6 @@ wss.on("connection", (ws) => {
           console.log("err:", err);
           return err;
         } else {
-          // console.log("Data from MongoDB:", data);
           console.log("Data Found in req.query.roomid:", data);
 
           Message.create(convertResData, function (err, newMessage) {
@@ -178,11 +167,8 @@ wss.on("connection", (ws) => {
               if (err) {
                 console.log("err:", err);
               } else {
-                // console.log("Data from MongoDB:", data);
-                console.log("Message Sent to Client:", data);
                 // broadcast to clients
                 wss.clients.forEach((client) => {
-                  // console.log("Client:", client);
                   client.send(JSON.stringify(data));
                 });
               }
@@ -191,22 +177,7 @@ wss.on("connection", (ws) => {
         }
       }
     );
-
-    // Message.create(convertResData, function (err) {
-    //   if (err) throw err;
-    // });
-
-    // console.log("Message Sent to Client:", convertResData);
-
-    // // broadcast to clients
-    // wss.clients.forEach((client) => {
-    // //   console.log("Client:", client);
-    //   client.send(JSON.stringify(convertResData));
-    // });
   });
-
-  //send immediatly a feedback to the incoming connection
-  // ws.send("Hi there, I am a WebSocket server");
 });
 
 //start our server

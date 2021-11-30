@@ -11,6 +11,7 @@ const CreateChatroom = (req, res) => {
       console.log(err);
     }
 
+	// if the account is found, then it would create a new chatroom in chatroomCollection
     Account.find({ _id: reqData.userID }, function (err, data) {
       if (err) {
         throw err;
@@ -24,6 +25,7 @@ const CreateChatroom = (req, res) => {
           timestamp: Number(reqData.timestamp),
         };
 
+		// Chatroom collection creates a new document
         Chatroom.create(convertReqData, function (err, data) {
           if (err) throw err;
 
@@ -36,6 +38,7 @@ const CreateChatroom = (req, res) => {
 
           Account.findByIdAndUpdate(
             { _id: convertReqData.creatorUserID },
+			// data._id is from the chatroom that was created. so after creating chatroom, it gives its ObjectId to Account
             { $push: { chatrooms: data._id } }
           )
             .then((res) => console.log("res:", res))

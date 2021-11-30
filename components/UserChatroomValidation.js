@@ -27,15 +27,12 @@ const UserChatroomValidation = (req, res) => {
           res.send({ auth: true });
 
           return;
-          // return true;
         }
       }
 
       console.log("Cannot find Chatroom");
       res.send({ auth: false });
       return;
-      // console.log("Sending data.chatrooms:", data[0].chatrooms)
-      // res.send(data[0].chatrooms);
     }
   );
 };
