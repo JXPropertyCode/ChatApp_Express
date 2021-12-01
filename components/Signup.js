@@ -11,7 +11,7 @@ const Signup = (req, res) => {
     username: String(reqData.username),
     email: String(reqData.email),
     password: String(reqData.password),
-    timestamp: String(reqData.timestamp),
+    lastModified: String(reqData.lastModified),
   };
 
   // finding the email that is being requested to create an account

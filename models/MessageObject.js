@@ -7,7 +7,6 @@ let messageSchema = mongoose.Schema({
 	username: String,
 	email: String,
 	password: String,
-	timestamp: Number,
 	clientMessage: String,
 	createdAt: {
 		type: Number,

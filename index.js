@@ -142,7 +142,7 @@ wss.on("connection", (ws) => {
       username: messageParse.username.toString(),
       email: messageParse.email.toString(),
       password: messageParse.password.toString(),
-      timestamp: Number(messageParse.timestamp),
+      lastModified: Number(messageParse.lastModified),
       clientMessage: messageParse.clientMessage.toString(),
     });
 
