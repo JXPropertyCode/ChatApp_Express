@@ -19,7 +19,7 @@ const LoginValidation = (req, res) => {
         res.send({
           validCred: "true",
           username: data[0].username,
-          userID: data[0]._id,
+          owner: data[0]._id,
         });
         console.log("Account Found:", reqData);
       } else {

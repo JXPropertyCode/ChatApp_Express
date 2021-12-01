@@ -7,7 +7,7 @@ const ChangeUsername = (req, res) => {
   const reqData = req.body;
 
   Account.findByIdAndUpdate(
-    { _id: reqData.userID, email: reqData.email, password: reqData.password },
+    { _id: reqData.owner, email: reqData.email, password: reqData.password },
     { username: reqData.newUsername }
   )
     .then((res) => console.log("res:", res))

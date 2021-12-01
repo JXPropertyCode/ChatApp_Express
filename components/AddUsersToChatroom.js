@@ -63,7 +63,7 @@ const AddUsersToChatroom = async (req, res) => {
 
   console.log("reqData:", reqData);
 
-  // finding the userId to add the user to the chatroom
+  // finding the owner to add the user to the chatroom
   const memberChatroomStatus = await filterMembers(reqData);
   res.send(memberChatroomStatus);
   console.log("memberChatroomStatus:", memberChatroomStatus);

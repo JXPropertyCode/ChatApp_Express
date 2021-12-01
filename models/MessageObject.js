@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 let messageSchema = mongoose.Schema({
 	roomID: String,
-	userID: { type: Schema.Types.ObjectId, ref: 'accountCollection' },
+	owner: { type: Schema.Types.ObjectId, ref: 'accountCollection' },
 	username: String,
 	email: String,
 	password: String,

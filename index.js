@@ -26,7 +26,7 @@ const CreateChatroom = require("./components/CreateChatroom");
 const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
-const GetUsernameByUserId = require("./components/GetUsernameByUserId");
+const GetUsernameByUserID = require("./components/GetUsernameByUserID");
 
 const app = express();
 app.use(express.json());
@@ -125,7 +125,7 @@ app.post("/leave-chatroom", LeaveChatroom);
 
 app.post("/change-username", ChangeUsername);
 
-app.post("/get-username-by-user-id", GetUsernameByUserId);
+app.post("/get-username-by-user-id", GetUsernameByUserID);
 
 wss.on("connection", (ws) => {
   console.log("wss.clients:", wss.clients);
@@ -138,7 +138,7 @@ wss.on("connection", (ws) => {
     // validated username and password
     let convertResData = new Message({
       roomID: messageParse.roomID.toString(),
-      userID: messageParse.userID.toString(),
+      owner: messageParse.owner.toString(),
       username: messageParse.username.toString(),
       email: messageParse.email.toString(),
       password: messageParse.password.toString(),
@@ -149,7 +149,7 @@ wss.on("connection", (ws) => {
     // this is for seeing if the message being sent is authentic and valid. Haven't tested this to see if its true
     Account.find(
       {
-        _id: convertResData.userID,
+        _id: convertResData.owner,
         email: convertResData.email,
         password: convertResData.password,
       },
@@ -172,7 +172,7 @@ wss.on("connection", (ws) => {
                   client.send(JSON.stringify(data));
                 });
               }
-            }).populate("userID");
+            }).populate("owner");
           });
         }
       }

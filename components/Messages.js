@@ -1,17 +1,17 @@
 const Message = require("../models/MessageObject");
 
 // // path varaiable
-// http://www.livechat.com/chatroom/roomId123/userid123
-// route("/chatroom/:roomId/:userId").(req,res) => {
+// http://www.livechat.com/chatroom/roomId123/owner123
+// route("/chatroom/:roomId/:owner").(req,res) => {
 // 	req.params['roomId'] // roomId123
-// 	req.params['userId'] // userid123
+// 	req.params['owner'] // owner123
 // }
 
 // // path params // path query
-// http://www.livechat.com?chatroomid=roomId123&userId=userId123
+// http://www.livechat.com?chatroomid=roomId123&owner=owner123
 // route("/chatroom").(req,res) => {
 // 	req.query['chatroomid'] // roomId123
-// 	req.query['userId'] // userid123
+// 	req.query['owner'] // owner123
 // }
 
 const Messages = (req, res) => {
@@ -25,7 +25,7 @@ const Messages = (req, res) => {
       console.log("Data Found in req.query.roomid:", data);
       return res.json(data);
     }
-  }).populate("userID");
+  }).populate("owner");
 };
 
 module.exports = Messages;

@@ -7,15 +7,15 @@ const LeaveChatroom = (req, res) => {
   console.log("In Leave Chatroom...");
   console.log("reqData:", reqData);
 
-  const userID = reqData.userID;
+  const owner = reqData.owner;
   const chatroomID = reqData.chatroomID;
 
-  console.log("To be Removed userID:", userID);
+  console.log("To be Removed owner:", owner);
   console.log("To be Removed chatroomID:", chatroomID);
 
   // users account would delete its chatroom
   Account.findByIdAndUpdate(
-    { _id: userID },
+    { _id: owner },
     { $pull: { chatrooms: chatroomID } }
   )
     .then((res) => console.log("res:", res))
@@ -24,7 +24,7 @@ const LeaveChatroom = (req, res) => {
   // chatroom would remove the member
   Chatroom.findByIdAndUpdate(
     { _id: chatroomID },
-    { $pull: { members: userID } }
+    { $pull: { members: owner } }
   )
     .then((res) => console.log("res:", res))
     .catch((err) => console.log("err:", err));

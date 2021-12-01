@@ -1,12 +1,12 @@
 const Account = require("../models/AccountObject");
 
-const GetUsernameByUserId = async (req, res) => {
+const GetUsernameByUserID = async (req, res) => {
   console.log("Inside Get Username By User Id...");
   let reqData = req.body;
   console.log("reqData:", reqData);
 
   let getUsername = await Account.find({
-    _id: reqData.userID,
+    _id: reqData.owner,
   })
     .then((data) => {
       console.log("data[0]:", data[0]);
@@ -15,4 +15,4 @@ const GetUsernameByUserId = async (req, res) => {
     .catch((err) => err);
 };
 
-module.exports = GetUsernameByUserId;
+module.exports = GetUsernameByUserID;
