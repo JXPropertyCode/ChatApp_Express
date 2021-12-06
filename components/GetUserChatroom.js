@@ -24,7 +24,7 @@ const GetUserChatroom = async (req, res) => {
       .then((data) => {
         console.log("data in chatroom:", data);
         userChatrooms.push({
-          chatroomID: data[0]._id,
+          chatroomId: data[0]._id,
           chatroomName: data[0].chatroomName,
         });
       })

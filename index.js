@@ -137,7 +137,7 @@ wss.on("connection", (ws) => {
 
     // validated username and password
     let convertResData = new Message({
-      roomID: messageParse.roomID.toString(),
+      room: messageParse.room.toString(),
       owner: messageParse.owner.toString(),
       username: messageParse.username.toString(),
       email: messageParse.email.toString(),
@@ -158,7 +158,7 @@ wss.on("connection", (ws) => {
           console.log("err:", err);
           return err;
         } else {
-          console.log("Data Found in req.query.roomid:", data);
+          console.log("Data Found in req.query.room:", data);
 
           Message.create(convertResData, function (err, newMessage) {
             if (err) throw err;

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let messageSchema = mongoose.Schema({
-	roomID: String,
+	room: String,
 	owner: { type: Schema.Types.ObjectId, ref: 'accountCollection' },
 	username: String,
 	email: String,
