@@ -5,9 +5,12 @@ let accountSchema = mongoose.Schema({
     username: String,
     email: String,
     password: String,
-    lastModified: Number,
+    lastModified: {
+		type: Date,
+		default: Date.now,
+	},
 	createdAt: {
-		type: Number,
+		type: Date,
 		default: Date.now,
 	},
 });

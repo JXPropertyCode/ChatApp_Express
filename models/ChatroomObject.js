@@ -4,9 +4,12 @@ let chatroomSchema = mongoose.Schema({
 	creatorOwnerID: String,
     chatroomName: String,
 	members: [Object],
-    lastModified: Number,
+    lastModified: {
+		type: Date,
+		default: Date.now,
+	},
 	createdAt: {
-		type: Number,
+		type: Date,
 		default: Date.now,
 	},
 });

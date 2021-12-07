@@ -22,7 +22,7 @@ const CreateChatroom = (req, res) => {
           creatorOwnerID: String(reqData.owner),
           chatroomName: String(reqData.chatroomName),
           members: [reqData.owner],
-          lastModified: Number(reqData.lastModified),
+          // lastModified: Number(reqData.lastModified),
         };
 
 		// Chatroom collection creates a new document

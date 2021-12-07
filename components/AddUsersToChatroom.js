@@ -33,7 +33,10 @@ async function filterMembers(reqData) {
             // inside that specific user, it would add the chatroom to their accountCollection
             Account.findByIdAndUpdate(
               { _id: reqData.addMembersList[i] },
-              { $push: { chatrooms: reqData.currentChatroom } }
+              {
+                $push: { chatrooms: reqData.currentChatroom },
+                $set: { lastModified: Date.now() },
+              }
             )
               .then((res) => console.log("res:", res))
               .catch((err) => console.log("err:", err));
@@ -41,7 +44,10 @@ async function filterMembers(reqData) {
             // inside that specific chatroom, it would also add the user to the chatroomCollection's member array
             Chatroom.findByIdAndUpdate(
               { _id: reqData.currentChatroom },
-              { $push: { members: reqData.addMembersList[i] } }
+              {
+                $push: { members: reqData.addMembersList[i] },
+                $set: { lastModified: Date.now() },
+              }
             )
               .then((res) => console.log("res:", res))
               .catch((err) => console.log("err:", err));

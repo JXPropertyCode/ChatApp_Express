@@ -9,7 +9,7 @@ let messageSchema = mongoose.Schema({
 	password: String,
 	clientMessage: String,
 	createdAt: {
-		type: Number,
+		type: Date,
 		default: Date.now,
 	},
 });

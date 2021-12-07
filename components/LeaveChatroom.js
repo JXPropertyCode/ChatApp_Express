@@ -16,7 +16,7 @@ const LeaveChatroom = (req, res) => {
   // users account would delete its chatroom
   Account.findByIdAndUpdate(
     { _id: owner },
-    { $pull: { chatrooms: chatroomId } }
+    { $pull: { chatrooms: chatroomId }, $set: { lastModified: Date.now() } }
   )
     .then((res) => console.log("res:", res))
     .catch((err) => console.log("err:", err));
@@ -24,7 +24,7 @@ const LeaveChatroom = (req, res) => {
   // chatroom would remove the member
   Chatroom.findByIdAndUpdate(
     { _id: chatroomId },
-    { $pull: { members: owner } }
+    { $pull: { members: owner }, $set: { lastModified: Date.now() } }
   )
     .then((res) => console.log("res:", res))
     .catch((err) => console.log("err:", err));
