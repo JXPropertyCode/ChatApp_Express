@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 let chatroomSchema = mongoose.Schema({
 	creatorOwnerID: String,
     chatroomName: String,
-	members: [String],
+	members: [Object],
     lastModified: Number,
 	createdAt: {
 		type: Number,

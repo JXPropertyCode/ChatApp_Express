@@ -25,8 +25,8 @@ const GetChatroomMembers = async (req, res) => {
       await Account.find({ _id: chatroomData[0].members[i] })
         .then((data) => {
           console.log("member data:", data);
-          membersInChatroom.push(data[0].username);
-          return data[0].username;
+          membersInChatroom.push(data[0]);
+          return data[0];
         })
         .catch((err) => err);
     }
