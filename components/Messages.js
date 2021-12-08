@@ -1,7 +1,7 @@
 const Message = require("../models/MessageObject");
 
 // // path varaiable
-// http://www.livechat.com/chatroom/roomId123/owner123
+// http://www.livechat.com/chatroom/roomId123/owner123/
 // route("/chatroom/:room/:owner").(req,res) => {
 // 	req.params['room'] // roomId123
 // 	req.params['owner'] // owner123

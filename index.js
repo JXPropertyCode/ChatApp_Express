@@ -34,9 +34,12 @@ app.use(cors("*"));
 
 //initialize a simple http server
 const server = http.createServer(app);
+console.log("server:", server);
 
 //initialize the WebSocket server instance
-const wss = new WebSocket.Server({ server });
+// OG
+const wss = new WebSocket.Server({ server: server });
+// console.log("wss:", wss)
 
 const url = process.env.MONGODB_URL;
 
@@ -127,10 +130,56 @@ app.post("/change-username", ChangeUsername);
 
 app.post("/get-username-by-user-id", GetUsernameByUserID);
 
-wss.on("connection", (ws) => {
-  console.log("wss.clients:", wss.clients);
+// original
+
+// hashmap, key is room id, value is clients array
+// this fixes
+let chatRoomClients = {};
+
+app.get("/get-current-room-client", (req, res) => {
+  res.json(chatRoomClients);
+});
+
+wss.on("connection", (ws, req) => {
+  // console.log(c);
+  // console.log("c");
+  // gets pathname
+  let roomId = req.url.split("/")[1];
+  let userId = req.url.split("/")[2];
+  let clients = chatRoomClients[roomId] ? chatRoomClients[roomId] : [];
+  ws.userId = userId;
+  clients.push(ws);
+  chatRoomClients[roomId] = clients;
+  // console.log("url: ", req.url);
+  // console.log("wss.clients:", wss.clients);
+  // console.log(req.client);
+  // console.log("req");
+  // pathname
+
+  chatRoomClients[roomId].forEach((client) =>
+    console.log("chatRoomClients[roomId]: ", client.userId)
+  );
+
+  ws.on("close", function close() {
+    chatRoomClients[roomId] = chatRoomClients[roomId].filter(
+      (client) => client.userId !== userId
+    );
+    console.log("user id on closed target user Id", userId);
+
+    if (chatRoomClients[roomId]) {
+      chatRoomClients[roomId].forEach((client) =>
+        console.log("remaining: ", client.userId)
+      );
+    }
+    // console.log("req:", req)
+  });
+
+  // lyjBc36JbqNrSKq1l0UxSA==
+  // ATsTMyC/0wiDsNSIxjktzA==
+
   // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
+    console.log("message received:", JSON.parse(message));
     // log the received message and send it back to the client
     let messageParse = JSON.parse(message);
     console.log("Received from Client:", messageParse);
@@ -168,9 +217,22 @@ wss.on("connection", (ws) => {
                 console.log("err:", err);
               } else {
                 // broadcast to clients
-                wss.clients.forEach((client) => {
-                  client.send(JSON.stringify(data));
-                });
+                // OG
+                chatRoomClients[messageParse.room.toString()].forEach(
+                  (client) => {
+                    //   // console.log("current client:", client)
+                    //   // OG
+                    client.send(JSON.stringify(data));
+
+                    //   if (client.readyState === WebSocket.OPEN) {
+                    //     client.send(JSON.stringify(data));
+                    // }
+
+                    //   // if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    //   //   client.send(JSON.stringify(data));
+                    //   // }
+                  }
+                );
               }
             }).populate("owner");
           });
