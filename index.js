@@ -12,6 +12,9 @@ const Account = require("./models/AccountObject");
 const Chatroom = require("./models/ChatroomObject");
 // const { findOne } = require("./models/MessageObject");
 
+const emailController = require('./components/Email/Controller')
+
+
 // functions that I use
 const Messages = require("./components/Messages");
 const Chatrooms = require("./components/Chatrooms");
@@ -56,6 +59,16 @@ mongoose.connection
   .on("error", function (err) {
     console.log(err);
   });
+
+
+// This is the endpoint that is hit from the onSubmit handler in Landing.js
+// The callback is shelled off to a controller file to keep this file light.
+app.post('/email', emailController.collectEmail)
+
+// Same as above, but this is the endpoint pinged in the componentDidMount of 
+// Confirm.js on the client.
+app.post('/email/confirm/:id', emailController.confirmEmail)
+
 
 app.get("/", (req, res) => {
   // server health check on the localhost port

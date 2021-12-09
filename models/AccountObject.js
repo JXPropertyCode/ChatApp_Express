@@ -1,22 +1,26 @@
 const mongoose = require("mongoose");
 
 let accountSchema = mongoose.Schema({
-	chatrooms: [String],
-    username: String,
-    email: String,
-    password: String,
-    lastModified: {
-		type: Date,
-		default: Date.now,
-	},
-	createdAt: {
-		type: Date,
-		default: Date.now,
-	},
+  chatrooms: [String],
+  username: String,
+  email: String,
+  password: String,
+  confirmed: {
+    type: Boolean,
+    default: false,
+  },
+  lastModified: {
+    type: Date,
+    default: Date.now,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model(
-	"accountCollection",
-	accountSchema,
-	"accountCollection"
+  "accountCollection",
+  accountSchema,
+  "accountCollection"
 );

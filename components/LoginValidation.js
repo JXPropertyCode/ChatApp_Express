@@ -1,8 +1,26 @@
 const Account = require("../models/AccountObject");
 
-const LoginValidation = (req, res) => {
+const LoginValidation = async (req, res) => {
   console.log("Inside Login Validation...");
   let reqData = req.body;
+
+  // try {
+  //   let account = await Account.findOne({ email: reqData.email, password: reqData.password }).then(user => user).catch(e => "account err")
+  //   let account = await Account.findOne({ email: reqData.email, password: reqData.password }).then(user => user).catch(e => "account err")
+  //   let account = await Account.findOne({ email: reqData.email, password: reqData.password }).then(user => user).catch(e => "account err")
+  //   let account = await Account.findOne({ email: reqData.email, password: reqData.password }).then(user => user).catch(e => "account err")
+  //   if (!account) {
+  //     res.json({ validCred: "false" });
+  //   }
+  //   res.send({
+  //     validCred: "true",
+  //     username: data[0].username,
+  //     owner: data[0]._id,
+  //   });
+  // } catch (e) {
+  //   console.log(err);
+  // }
+
 
   // finding the email that is being requested to create an account
   Account.find(
@@ -15,7 +33,7 @@ const LoginValidation = (req, res) => {
 
       console.log("data[0]:", data[0]);
 
-      if (data.length === 1) {
+      if (data.length === 1 && data[0].confirmed === true) {
         res.send({
           validCred: "true",
           username: data[0].username,
