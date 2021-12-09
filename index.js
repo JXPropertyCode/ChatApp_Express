@@ -130,52 +130,53 @@ app.post("/change-username", ChangeUsername);
 
 app.post("/get-username-by-user-id", GetUsernameByUserID);
 
-// original
+// hashmap, key is room id, value is clients array. Keeps tracks of the speicifc clients in the room/ws
+// this fixes duplicating instances of connections. Where a user can connect many times and it would have it in its memory
+// everytime the user joins, it is differentialed by its userId from accountCollection
+// it would remove or add depending on who has connected
+let chatroomClients = {};
 
-// hashmap, key is room id, value is clients array
-// this fixes
-let chatRoomClients = {};
-
+// this simply checks what is inside the chatroomClients object
+// note: it would duplicate a connection at least 2 times due to maybe React's re-renderings
 app.get("/get-current-room-client", (req, res) => {
-  res.json(chatRoomClients);
+  res.json(chatroomClients);
 });
 
 wss.on("connection", (ws, req) => {
-  // console.log(c);
-  // console.log("c");
-  // gets pathname
+  // req.url gets path, this would allow ws to broadcast ONLY to the clients in its chatroomClients array.
   let roomId = req.url.split("/")[1];
   let userId = req.url.split("/")[2];
-  let clients = chatRoomClients[roomId] ? chatRoomClients[roomId] : [];
-  ws.userId = userId;
-  clients.push(ws);
-  chatRoomClients[roomId] = clients;
-  // console.log("url: ", req.url);
-  // console.log("wss.clients:", wss.clients);
-  // console.log(req.client);
-  // console.log("req");
-  // pathname
 
-  chatRoomClients[roomId].forEach((client) =>
-    console.log("chatRoomClients[roomId]: ", client.userId)
+  // if the chatRoomClient doesn't have an array, it would add it
+  let clients = chatroomClients[roomId] ? chatroomClients[roomId] : [];
+
+  // ws is now given an key and value
+  ws.userId = userId;
+
+  // clients, aka the array, would push the new client that has joined the room
+  clients.push(ws);
+
+  // update teh chatRoomClient's array with the newly added user array
+  chatroomClients[roomId] = clients;
+
+  chatroomClients[roomId].forEach((client) =>
+    console.log("chatroomClients[roomId]: ", client.userId)
   );
 
   ws.on("close", function close() {
-    chatRoomClients[roomId] = chatRoomClients[roomId].filter(
+    // on close, aka disconnect, the chatRoomClient would filter that specific userId from the array
+    chatroomClients[roomId] = chatroomClients[roomId].filter(
       (client) => client.userId !== userId
     );
     console.log("user id on closed target user Id", userId);
 
-    if (chatRoomClients[roomId]) {
-      chatRoomClients[roomId].forEach((client) =>
+    // outputs the remaining clients in the ws connection
+    if (chatroomClients[roomId]) {
+      chatroomClients[roomId].forEach((client) =>
         console.log("remaining: ", client.userId)
       );
     }
-    // console.log("req:", req)
   });
-
-  // lyjBc36JbqNrSKq1l0UxSA==
-  // ATsTMyC/0wiDsNSIxjktzA==
 
   // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
@@ -216,21 +217,10 @@ wss.on("connection", (ws, req) => {
               if (err) {
                 console.log("err:", err);
               } else {
-                // broadcast to clients
-                // OG
-                chatRoomClients[messageParse.room.toString()].forEach(
+                // broadcast to clients in teh chatroomClients
+                chatroomClients[messageParse.room.toString()].forEach(
                   (client) => {
-                    //   // console.log("current client:", client)
-                    //   // OG
                     client.send(JSON.stringify(data));
-
-                    //   if (client.readyState === WebSocket.OPEN) {
-                    //     client.send(JSON.stringify(data));
-                    // }
-
-                    //   // if (client !== ws && client.readyState === WebSocket.OPEN) {
-                    //   //   client.send(JSON.stringify(data));
-                    //   // }
                   }
                 );
               }
