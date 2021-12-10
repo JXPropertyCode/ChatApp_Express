@@ -21,7 +21,6 @@ const LoginValidation = async (req, res) => {
   //   console.log(err);
   // }
 
-
   // finding the email that is being requested to create an account
   Account.find(
     { email: reqData.email, password: reqData.password },
@@ -33,13 +32,25 @@ const LoginValidation = async (req, res) => {
 
       console.log("data[0]:", data[0]);
 
-      if (data.length === 1 && data[0].confirmed === true) {
-        res.send({
-          validCred: "true",
-          username: data[0].username,
-          owner: data[0]._id,
-        });
+      if (data.length === 1) {
+        data[0].confirmed === true;
         console.log("Account Found:", reqData);
+
+        if (data[0].confirmed === true) {
+          res.send({
+            validCred: "true",
+            confirmed: "true",
+            username: data[0].username,
+            owner: data[0]._id,
+          });
+        } else {
+          res.send({
+            validCred: "true",
+            confirmed: "false",
+            username: data[0].username,
+            owner: data[0]._id,
+          });
+        }
       } else {
         // insert into MongoDB
         res.send({ validCred: "false" });
