@@ -19,36 +19,10 @@ exports.collectEmail = (req, res) => {
       }
     })
     .catch((err) => console.log(err));
-
-  //   Account.findOne({ email })
-  //     .then(user => {
-
-  //       // We have a new user! Send them a confirmation email.
-  //       if (!user) {
-  //         Account.create({ email })
-  //           .then(newUser => sendEmail(newUser.email, templates.confirm(newUser._id)))
-  //           .then(() => res.json({ msg: msgs.confirm }))
-  //           .catch(err => console.log(err))
-  //       }
-
-  //       // We have already seen this email address. But the user has not
-  //       // clicked on the confirmation link. Send another confirmation email.
-  //       else if (user && !user.confirmed) {
-  //         sendEmail(user.email, templates.confirm(user._id))
-  //           .then(() => res.json({ msg: msgs.resend }))
-  //       }
-
-  //       // The user has already confirmed this email address
-  //       else {
-  //         res.json({ msg: msgs.alreadyConfirmed })
-  //       }
-
-  //     })
-  //     .catch(err => console.log(err))
 };
 
 exports.confirmEmail = (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
   console.log("In Confirm Email...");
 
@@ -77,6 +51,82 @@ exports.confirmEmail = (req, res) => {
       }
     })
     .catch((err) => console.log(err));
+};
+
+// confirmation of change email
+exports.changeEmail = (req, res) => {
+  console.log("In Controller Change Email...");
+  console.log("req.body:", req.body);
+  const { email } = req.body;
+
+  Account.findOne({ email: email })
+    .then((user) => {
+      console.log("user found:", user);
+
+      sendEmail(user.email, templates.changeEmail(user._id));
+    })
+    .catch((err) => console.log(err));
+
+  // Account.findByIdAndUpdate(
+  //   { _id: reqData.owner },
+  //   { $set: { email: reqData.newEmail } }
+  // )
+  //   .then((res) => console.log("res:", res))
+  //   .catch((err) => console.log("err:", err));
+};
+
+// after submitting old and new password it would activate this
+exports.confirmChangeEmail = (req, res) => {
+  console.log("In Controller Confirm Change Email...");
+  console.log("req.body:", req.body);
+
+  const reqData = req.body
+
+  Account.findByIdAndUpdate(
+    { _id: reqData.owner },
+    { $set: { email: reqData.newEmail } }
+  )
+    .then((res) => console.log("res:", res))
+    .catch((err) => console.log("err:", err));
+};
+
+exports.changePassword = (req, res) => {
+  console.log("In Controller Change Password...");
+  console.log("req.body:", req.body);
+
+  const { email } = req.body;
+
+  // console.log("Currently Inactive...");
+
+  Account.findOne({ email: email })
+    .then((user) => {
+      console.log("user found:", user);
+
+      sendEmail(user.email, templates.changePassword(user._id));
+    })
+    .catch((err) => console.log(err));
+  // Account.findByIdAndUpdate(
+  //   { _id: reqData.owner },
+  //   { $set: { email: reqData.newEmail } }
+  // )
+  //   .then((res) => console.log("res:", res))
+  //   .catch((err) => console.log("err:", err));
+};
+
+exports.confirmChangePassword = (req, res) => {
+  console.log("In Controller Confirm Change Password...");
+  console.log("req.body:", req.body);
+
+  const reqData = req.body;
+
+  console.log("Currently Inactive...")
+
+  Account.findByIdAndUpdate(
+    { _id: reqData.owner },
+    { $set: { password: reqData.newPassword } }
+  )
+    .then((res) => console.log("res:", res))
+    .catch((err) => console.log("err:", err));
 };
 
 // The callback that is invoked when the user visits the confirmation

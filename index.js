@@ -30,6 +30,7 @@ const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
 const GetUsernameByUserID = require("./components/GetUsernameByUserID");
+// const ChangeEmail = require("./components/ChangeEmail");
 
 const app = express();
 app.use(express.json());
@@ -68,6 +69,14 @@ app.post('/email', emailController.collectEmail)
 // Same as above, but this is the endpoint pinged in the componentDidMount of 
 // Confirm.js on the client.
 app.post('/email/confirm/:id', emailController.confirmEmail)
+
+app.post("/change-email/:id", emailController.changeEmail);
+
+app.post("/confirm-change-email/:id", emailController.confirmChangeEmail);
+
+app.post("/change-password/:id", emailController.changePassword);
+
+app.post("/confirm-change-password/:id", emailController.confirmChangePassword);
 
 
 app.get("/", (req, res) => {
