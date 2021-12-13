@@ -68,7 +68,7 @@ app.post('/email', emailController.collectEmail)
 
 // Same as above, but this is the endpoint pinged in the componentDidMount of 
 // Confirm.js on the client.
-app.post('/email/confirm/:id', emailController.confirmEmail)
+app.post('/confirm/:id', emailController.confirmEmail)
 
 app.post("/change-email/:id", emailController.changeEmail);
 
