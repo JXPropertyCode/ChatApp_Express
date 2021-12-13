@@ -1,4 +1,4 @@
-const Account = require("/Users/johnnyxian/Desktop/ReactProjects/chat-app-project/chat-react-express-app/chat-express-app/models/AccountObject.js");
+const Account = require("../../models/AccountObject");
 const sendEmail = require("./SendEmail");
 const msgs = require("./Message");
 const templates = require("./TemplateEmail");
