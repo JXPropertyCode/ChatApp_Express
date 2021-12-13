@@ -29,7 +29,7 @@ const CreateChatroom = require("./components/CreateChatroom");
 const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
-const GetUsernameByUserId = require("./components/GetUsernameByUserID");
+const GetUsernameByUserId = require("./components/GetUsernameByUserId");
 // const ChangeEmail = require("./components/ChangeEmail");
 
 const app = express();

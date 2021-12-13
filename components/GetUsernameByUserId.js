@@ -1,6 +1,6 @@
 const Account = require("../models/AccountObject");
 
-const GetUsernameByUserID = async (req, res) => {
+const GetUsernameByUserId = async (req, res) => {
   // console.log("Inside Get Username By User Id...");
   let reqData = req.body;
   // console.log("reqData:", reqData);
@@ -15,4 +15,4 @@ const GetUsernameByUserID = async (req, res) => {
     .catch((err) => err);
 };
 
-module.exports = GetUsernameByUserID;
+module.exports = GetUsernameByUserId;
