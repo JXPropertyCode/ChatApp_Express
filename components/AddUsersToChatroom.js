@@ -15,7 +15,7 @@ async function filterMembers(reqData) {
       .catch((err) => false);
 
     if (isUserFound) {
-      console.log("User Found:", reqData.addMembersList[i]);
+      // console.log("User Found:", reqData.addMembersList[i]);
 
       // if the account already has this chatroom, don't add it
       await Account.find({
@@ -24,10 +24,10 @@ async function filterMembers(reqData) {
       })
         .then((data) => {
           if (data.length === 1) {
-            console.log("Chatroom Already Exists In This Account...");
+            // console.log("Chatroom Already Exists In This Account...");
             memberStatus.notAddedMembers.push(reqData.addMembersList[i]);
           } else {
-            console.log("Chatroom Being Added to This Account...");
+            // console.log("Chatroom Being Added to This Account...");
             memberStatus.addedMembers.push(reqData.addMembersList[i]);
 
             // inside that specific user, it would add the chatroom to their accountCollection
@@ -38,8 +38,14 @@ async function filterMembers(reqData) {
                 $set: { lastModified: Date.now() },
               }
             )
-              .then((res) => console.log("res:", res))
-              .catch((err) => console.log("err:", err));
+              .then((res) => 
+              // console.log("res:", res)
+               res
+              )
+              .catch((err) => 
+              // console.log("err:", err)
+              err
+              );
 
             // inside that specific chatroom, it would also add the user to the chatroomCollection's member array
             Chatroom.findByIdAndUpdate(
@@ -49,13 +55,19 @@ async function filterMembers(reqData) {
                 $set: { lastModified: Date.now() },
               }
             )
-              .then((res) => console.log("res:", res))
-              .catch((err) => console.log("err:", err));
+              .then((res) => 
+              // console.log("res:", res)
+              res
+              )
+              .catch((err) => 
+              // console.log("err:", err)
+              err
+              );
           }
         })
         .catch((err) => err);
     } else {
-      console.log("User NOT Found:", reqData.addMembersList[i]);
+      // console.log("User NOT Found:", reqData.addMembersList[i]);
       memberStatus.notAddedMembers.push(reqData.addMembersList[i]);
     }
   }
@@ -64,15 +76,15 @@ async function filterMembers(reqData) {
 }
 
 const AddUsersToChatroom = async (req, res) => {
-  console.log("Inside Add Users to Chatroom...");
+  // console.log("Inside Add Users to Chatroom...");
   const reqData = req.body;
 
-  console.log("reqData:", reqData);
+  // console.log("reqData:", reqData);
 
   // finding the owner to add the user to the chatroom
   const memberChatroomStatus = await filterMembers(reqData);
   res.send(memberChatroomStatus);
-  console.log("memberChatroomStatus:", memberChatroomStatus);
+  // console.log("memberChatroomStatus:", memberChatroomStatus);
 };
 
 module.exports = AddUsersToChatroom;

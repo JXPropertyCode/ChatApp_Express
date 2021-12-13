@@ -55,13 +55,13 @@ exports.confirmEmail = (req, res) => {
 
 // confirmation of change email
 exports.changeEmail = (req, res) => {
-  console.log("In Controller Change Email...");
-  console.log("req.body:", req.body);
+  // console.log("In Controller Change Email...");
+  // console.log("req.body:", req.body);
   const { email } = req.body;
 
   Account.findOne({ email: email })
     .then((user) => {
-      console.log("user found:", user);
+      // console.log("user found:", user);
 
       sendEmail(user.email, templates.changeEmail(user._id));
     })
@@ -77,8 +77,8 @@ exports.changeEmail = (req, res) => {
 
 // after submitting old and new password it would activate this
 exports.confirmChangeEmail = (req, res) => {
-  console.log("In Controller Confirm Change Email...");
-  console.log("req.body:", req.body);
+  // console.log("In Controller Confirm Change Email...");
+  // console.log("req.body:", req.body);
 
   const reqData = req.body
 
@@ -91,8 +91,8 @@ exports.confirmChangeEmail = (req, res) => {
 };
 
 exports.changePassword = (req, res) => {
-  console.log("In Controller Change Password...");
-  console.log("req.body:", req.body);
+  // console.log("In Controller Change Password...");
+  // console.log("req.body:", req.body);
 
   const { email } = req.body;
 
@@ -114,12 +114,12 @@ exports.changePassword = (req, res) => {
 };
 
 exports.confirmChangePassword = (req, res) => {
-  console.log("In Controller Confirm Change Password...");
-  console.log("req.body:", req.body);
+  // console.log("In Controller Confirm Change Password...");
+  // console.log("req.body:", req.body);
 
   const reqData = req.body;
 
-  console.log("Currently Inactive...")
+  // console.log("Currently Inactive...")
 
   Account.findByIdAndUpdate(
     { _id: reqData.owner },

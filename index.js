@@ -38,7 +38,7 @@ app.use(cors("*"));
 
 //initialize a simple http server
 const server = http.createServer(app);
-console.log("server:", server);
+// console.log("server:", server);
 
 //initialize the WebSocket server instance
 // OG
@@ -55,10 +55,10 @@ mongoose.connect(url, {
 // check for DB connection
 mongoose.connection
   .once("open", function () {
-    console.log("MongoDB running");
+    // console.log("MongoDB running");
   })
   .on("error", function (err) {
-    console.log(err);
+    // console.log(err);
   });
 
 
@@ -182,7 +182,8 @@ wss.on("connection", (ws, req) => {
   chatroomClients[roomId] = clients;
 
   chatroomClients[roomId].forEach((client) =>
-    console.log("chatroomClients[roomId]: ", client.userId)
+    // console.log("chatroomClients[roomId]: ", client.userId)
+    client
   );
 
   ws.on("close", function close() {
@@ -190,22 +191,23 @@ wss.on("connection", (ws, req) => {
     chatroomClients[roomId] = chatroomClients[roomId].filter(
       (client) => client.userId !== userId
     );
-    console.log("user id on closed target user Id", userId);
+    // console.log("user id on closed target user Id", userId);
 
     // outputs the remaining clients in the ws connection
     if (chatroomClients[roomId]) {
       chatroomClients[roomId].forEach((client) =>
-        console.log("remaining: ", client.userId)
+        // console.log("remaining: ", client.userId)
+        client
       );
     }
   });
 
   // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
-    console.log("message received:", JSON.parse(message));
+    // console.log("message received:", JSON.parse(message));
     // log the received message and send it back to the client
     let messageParse = JSON.parse(message);
-    console.log("Received from Client:", messageParse);
+    // console.log("Received from Client:", messageParse);
 
     // validated username and password
     let convertResData = new Message({
@@ -227,17 +229,17 @@ wss.on("connection", (ws, req) => {
       },
       function (err, data) {
         if (err) {
-          console.log("err:", err);
+          // console.log("err:", err);
           return err;
         } else {
-          console.log("Data Found in req.query.room:", data);
+          // console.log("Data Found in req.query.room:", data);
 
           Message.create(convertResData, function (err, newMessage) {
             if (err) throw err;
-            console.log("newMessage", newMessage);
+            // console.log("newMessage", newMessage);
             Message.findById({ _id: newMessage._id }, function (err, data) {
               if (err) {
-                console.log("err:", err);
+                // console.log("err:", err);
               } else {
                 // broadcast to clients in teh chatroomClients
                 chatroomClients[messageParse.room.toString()].forEach(
@@ -256,5 +258,5 @@ wss.on("connection", (ws, req) => {
 
 //start our server
 server.listen(process.env.PORT || 8000, () => {
-  console.log(`Server started on port ${server.address().port} :)`);
+  // console.log(`Server started on port ${server.address().port} :)`);
 });
