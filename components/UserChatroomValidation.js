@@ -1,7 +1,7 @@
 const Account = require("../models/AccountObject");
 
 const UserChatroomValidation = (req, res) => {
-  console.log("Inside User Chatroom Validation...");
+  // console.log("Inside User Chatroom Validation...");
   let reqData = req.body;
 
   // finding the email that is being requested to create an account
@@ -9,12 +9,12 @@ const UserChatroomValidation = (req, res) => {
     { email: reqData.email, password: reqData.password },
     function (err, data) {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return err;
       }
 
-      console.log("reqData:", reqData);
-      console.log("data[0].chatrooms:", data[0].chatrooms);
+      // console.log("reqData:", reqData);
+      // console.log("data[0].chatrooms:", data[0].chatrooms);
 
       if (data.length === 0) {
         res.send({ auth: false });
@@ -22,7 +22,7 @@ const UserChatroomValidation = (req, res) => {
       }
 
       for (let i = 0; i < data[0].chatrooms.length; i++) {
-        console.log(reqData.reqChatroom, data[0].chatrooms[i]);
+        // console.log(reqData.reqChatroom, data[0].chatrooms[i]);
         if (reqData.reqChatroom === data[0].chatrooms[i]) {
           res.send({ auth: true });
 
@@ -30,7 +30,7 @@ const UserChatroomValidation = (req, res) => {
         }
       }
 
-      console.log("Cannot find Chatroom");
+      // console.log("Cannot find Chatroom");
       res.send({ auth: false });
       return;
     }

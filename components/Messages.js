@@ -16,13 +16,14 @@ const Message = require("../models/MessageObject");
 
 const Messages = (req, res) => {
   // get the parameters of the url
-  console.log("req.query.room:", req.query.room);
+  // console.log("req.query.room:", req.query.room);
   // this gets only the chatroom data from MongoDB after filtering the messageCollection and outputs it onto the local host
   Message.find({ room: req.query.room }, function (err, data) {
     if (err) {
-      console.log("err:", err);
+      // console.log("err:", err);
+      return err
     } else {
-      console.log("Data Found in req.query.room:", data);
+      // console.log("Data Found in req.query.room:", data);
       return res.json(data);
     }
   }).populate("owner");

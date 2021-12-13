@@ -5,28 +5,32 @@ const templates = require("./TemplateEmail");
 
 // The callback that is invoked when the user submits the form on the client.
 exports.collectEmail = (req, res) => {
-  console.log("In Collect Email...");
-  console.log("req.body:", req.body);
+  // console.log("In Collect Email...");
+  // console.log("req.body:", req.body);
 
   const { email } = req.body;
 
   Account.findOne({ email: email })
     .then((user) => {
-      console.log("user found:", user);
+      // console.log("user found:", user);
 
       if (user.confirmed === false) {
         sendEmail(user.email, templates.confirm(user._id));
       }
     })
-    .catch((err) => console.log(err));
+    .catch(
+      (err) =>
+        // console.log(err)
+        err
+    );
 };
 
 exports.confirmEmail = (req, res) => {
   const { id } = req.params;
 
-  console.log("In Confirm Email...");
+  // console.log("In Confirm Email...");
 
-  console.log("req.params:", req.params);
+  // console.log("req.params:", req.params);
 
   Account.findById({ _id: id })
     .then((user) => {
@@ -42,7 +46,11 @@ exports.confirmEmail = (req, res) => {
       else if (user && !user.confirmed) {
         Account.findByIdAndUpdate({ _id: id }, { $set: { confirmed: true } })
           .then((res) => res.send({ msg: msgs.confirmed }))
-          .catch((err) => console.log(err));
+          .catch(
+            (err) =>
+              // console.log(err)
+              err
+          );
       }
 
       // The user has already confirmed this email address.
@@ -50,7 +58,11 @@ exports.confirmEmail = (req, res) => {
         res.send({ msg: msgs.alreadyConfirmed });
       }
     })
-    .catch((err) => console.log(err));
+    .catch(
+      (err) =>
+        // console.log(err)
+        err
+    );
 };
 
 // confirmation of change email
@@ -65,7 +77,11 @@ exports.changeEmail = (req, res) => {
 
       sendEmail(user.email, templates.changeEmail(user._id));
     })
-    .catch((err) => console.log(err));
+    .catch(
+      (err) =>
+        //  console.log(err)
+        err
+    );
 
   // Account.findByIdAndUpdate(
   //   { _id: reqData.owner },
@@ -80,14 +96,22 @@ exports.confirmChangeEmail = (req, res) => {
   // console.log("In Controller Confirm Change Email...");
   // console.log("req.body:", req.body);
 
-  const reqData = req.body
+  const reqData = req.body;
 
   Account.findByIdAndUpdate(
     { _id: reqData.owner },
     { $set: { email: reqData.newEmail } }
   )
-    .then((res) => console.log("res:", res))
-    .catch((err) => console.log("err:", err));
+    .then(
+      (res) =>
+        // console.log("res:", res)
+        res
+    )
+    .catch(
+      (err) =>
+        // console.log("err:", err)
+        err
+    );
 };
 
 exports.changePassword = (req, res) => {
@@ -100,11 +124,14 @@ exports.changePassword = (req, res) => {
 
   Account.findOne({ email: email })
     .then((user) => {
-      console.log("user found:", user);
+      // console.log("user found:", user);
 
       sendEmail(user.email, templates.changePassword(user._id));
     })
-    .catch((err) => console.log(err));
+    .catch(
+      (err) => err
+      // console.log(err)
+    );
   // Account.findByIdAndUpdate(
   //   { _id: reqData.owner },
   //   { $set: { email: reqData.newEmail } }
@@ -125,8 +152,16 @@ exports.confirmChangePassword = (req, res) => {
     { _id: reqData.owner },
     { $set: { password: reqData.newPassword } }
   )
-    .then((res) => console.log("res:", res))
-    .catch((err) => console.log("err:", err));
+    .then(
+      (res) =>
+        // console.log("res:", res)
+        res
+    )
+    .catch(
+      (err) =>
+        // console.log("err:", err)
+        err
+    );
 };
 
 // The callback that is invoked when the user visits the confirmation

@@ -1,7 +1,7 @@
 const Account = require("../models/AccountObject");
 
 const LoginValidation = async (req, res) => {
-  console.log("Inside Login Validation...");
+  // console.log("Inside Login Validation...");
   let reqData = req.body;
 
   // try {
@@ -26,15 +26,15 @@ const LoginValidation = async (req, res) => {
     { email: reqData.email, password: reqData.password },
     function (err, data) {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return err;
       }
 
-      console.log("data[0]:", data[0]);
+      // console.log("data[0]:", data[0]);
 
       if (data.length === 1) {
         data[0].confirmed === true;
-        console.log("Account Found:", reqData);
+        // console.log("Account Found:", reqData);
 
         if (data[0].confirmed === true) {
           res.send({
@@ -54,7 +54,7 @@ const LoginValidation = async (req, res) => {
       } else {
         // insert into MongoDB
         res.send({ validCred: "false" });
-        console.log("Account NOT Found:", reqData);
+        // console.log("Account NOT Found:", reqData);
       }
     }
   );
