@@ -9,31 +9,31 @@ module.exports = {
   confirm: id => ({
     subject: 'Confirm Your Account',
     html: `
-      <a href='http://localhost:3000/confirm/${id}'>
+      <a href='${process.env.EXPRESS_SERVER}confirm/${id}'>
         Click to Confirm Account!
       </a>
     `,      
-    text: `Copy and paste this link: http://localhost:3000/confirm/${id}`
+    text: `Copy and paste this link: ${process.env.EXPRESS_SERVER}confirm/${id}`
   }),
 
   changeEmail: id => ({
     subject: 'Request to Change Your Email',
     html: `
-      <a href='http://localhost:3000/change-email/${id}'>
+      <a href='${process.env.EXPRESS_SERVER}change-email/${id}'>
         Click to Change Your Email!
       </a>
     `,      
-    text: `Copy and paste this link: http://localhost:3000/change-email/${id}`
+    text: `Copy and paste this link: ${process.env.EXPRESS_SERVER}change-email/${id}`
   }),
 
   changePassword: id => ({
     subject: 'Request to Change Your Password',
     html: `
-      <a href='http://localhost:3000/change-password/${id}'>
+      <a href='${process.env.EXPRESS_SERVER}change-password/${id}'>
         Click to Change Your Email!
       </a>
     `,      
-    text: `Copy and paste this link: http://localhost:3000/change-password/${id}`
+    text: `Copy and paste this link: ${process.env.EXPRESS_SERVER}change-password/${id}`
   }),
   
 }
