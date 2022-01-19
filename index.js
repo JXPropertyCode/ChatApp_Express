@@ -12,8 +12,7 @@ const Account = require("./models/AccountObject");
 const Chatroom = require("./models/ChatroomObject");
 // const { findOne } = require("./models/MessageObject");
 
-const emailController = require('./components/Email/Controller')
-
+// const emailController = require("./components/Email/Controller");
 
 // functions that I use
 const Messages = require("./components/Messages");
@@ -61,23 +60,21 @@ mongoose.connection
     // console.log(err);
   });
 
-
 // This is the endpoint that is hit from the onSubmit handler in Landing.js
 // The callback is shelled off to a controller file to keep this file light.
-app.post('/email', emailController.collectEmail)
+// app.post("/email", emailController.collectEmail);
 
-// Same as above, but this is the endpoint pinged in the componentDidMount of 
+// Same as above, but this is the endpoint pinged in the componentDidMount of
 // Confirm.js on the client.
-app.post('/confirm/:id', emailController.confirmEmail)
+// app.post("/confirm/:id", emailController.confirmEmail);
 
-app.post("/change-email/:id", emailController.changeEmail);
+// app.post("/change-email/:id", emailController.changeEmail);
 
-app.post("/confirm-change-email/:id", emailController.confirmChangeEmail);
+// app.post("/confirm-change-email/:id", emailController.confirmChangeEmail);
 
-app.post("/change-password/:id", emailController.changePassword);
+// app.post("/change-password/:id", emailController.changePassword);
 
-app.post("/confirm-change-password/:id", emailController.confirmChangePassword);
-
+// app.post("/confirm-change-password/:id", emailController.confirmChangePassword);
 
 app.get("/", (req, res) => {
   // server health check on the localhost port
@@ -181,9 +178,10 @@ wss.on("connection", (ws, req) => {
   // update teh chatRoomClient's array with the newly added user array
   chatroomClients[roomId] = clients;
 
-  chatroomClients[roomId].forEach((client) =>
-    // console.log("chatroomClients[roomId]: ", client.userId)
-    client
+  chatroomClients[roomId].forEach(
+    (client) =>
+      // console.log("chatroomClients[roomId]: ", client.userId)
+      client
   );
 
   ws.on("close", function close() {
@@ -195,9 +193,10 @@ wss.on("connection", (ws, req) => {
 
     // outputs the remaining clients in the ws connection
     if (chatroomClients[roomId]) {
-      chatroomClients[roomId].forEach((client) =>
-        // console.log("remaining: ", client.userId)
-        client
+      chatroomClients[roomId].forEach(
+        (client) =>
+          // console.log("remaining: ", client.userId)
+          client
       );
     }
   });
@@ -258,5 +257,5 @@ wss.on("connection", (ws, req) => {
 
 //start our server
 server.listen(process.env.PORT || 8000, () => {
-  // console.log(`Server started on port ${server.address().port} :)`);
+  console.log(`Server started on port ${server.address().port} :)`);
 });

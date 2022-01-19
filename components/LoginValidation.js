@@ -33,7 +33,7 @@ const LoginValidation = async (req, res) => {
       // console.log("data[0]:", data[0]);
 
       if (data.length === 1) {
-        data[0].confirmed === true;
+        // data[0].confirmed === true;
         // console.log("Account Found:", reqData);
 
         if (data[0].confirmed === true) {
