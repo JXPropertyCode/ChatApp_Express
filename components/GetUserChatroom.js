@@ -9,7 +9,7 @@ const GetUserChatroom = async (req, res) => {
 
   let getUserChatrooms = await Account.find({
     email: reqData.email,
-    password: reqData.password,
+    // password: reqData.password,
   })
     .then((data) => {
       // console.log("data[0].chatrooms:", data[0].chatrooms);

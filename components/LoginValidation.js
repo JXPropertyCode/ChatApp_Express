@@ -1,4 +1,5 @@
 const Account = require("../models/AccountObject");
+const CryptoJS = require("crypto-js");
 
 const LoginValidation = async (req, res) => {
   // console.log("Inside Login Validation...");
@@ -21,20 +22,39 @@ const LoginValidation = async (req, res) => {
   //   console.log(err);
   // }
 
+  const decrypt = (input) => {
+    // Decrypt
+    var bytes = CryptoJS.AES.decrypt(input, process.env.CRYPTO_JS_SECRET_KEY);
+    var originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+    // console.log("originalText:", originalText);
+    return originalText;
+  };
+
   // finding the email that is being requested to create an account
   Account.find(
-    { email: reqData.email, password: reqData.password },
+    {
+      email: reqData.email,
+      // , password: reqData.password
+    },
     function (err, data) {
       if (err) {
         // console.log(err);
         return err;
       }
 
+      // comparing the db and input passwords
+      console.log("encrypt db pass:", data[0].password);
+      console.log("encrypt reqData.password:", reqData.password);
+
+      const decryptDBPass = decrypt(data[0].password);
+      const decryptReqPass = decrypt(reqData.password);
+
       // console.log("data[0]:", data[0]);
 
-      if (data.length === 1) {
+      if (data.length === 1 && decryptDBPass === decryptReqPass) {
         // data[0].confirmed === true;
-        // console.log("Account Found:", reqData);
+        console.log("Account Found:", reqData);
 
         if (data[0].confirmed === true) {
           res.send({

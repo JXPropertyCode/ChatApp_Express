@@ -214,7 +214,7 @@ wss.on("connection", (ws, req) => {
       owner: messageParse.owner.toString(),
       username: messageParse.username.toString(),
       email: messageParse.email.toString(),
-      password: messageParse.password.toString(),
+      // password: messageParse.password.toString(),
       // lastModified: Number(messageParse.lastModified),
       clientMessage: messageParse.clientMessage.toString(),
     });
@@ -224,7 +224,7 @@ wss.on("connection", (ws, req) => {
       {
         _id: convertResData.owner,
         email: convertResData.email,
-        password: convertResData.password,
+        // password: convertResData.password,
       },
       function (err, data) {
         if (err) {

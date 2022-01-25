@@ -6,7 +6,7 @@ let messageSchema = mongoose.Schema({
 	owner: { type: Schema.Types.ObjectId, ref: 'accountCollection' },
 	username: String,
 	email: String,
-	password: String,
+	// password: String,
 	clientMessage: String,
 	createdAt: {
 		type: Date,

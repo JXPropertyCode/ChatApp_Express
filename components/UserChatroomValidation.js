@@ -6,7 +6,9 @@ const UserChatroomValidation = (req, res) => {
 
   // finding the email that is being requested to create an account
   Account.find(
-    { email: reqData.email, password: reqData.password },
+    { email: reqData.email
+      // , password: reqData.password 
+    },
     function (err, data) {
       if (err) {
         // console.log(err);
