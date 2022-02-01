@@ -29,6 +29,7 @@ const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
 const GetUsernameByUserId = require("./components/GetUsernameByUserId");
+const CallGoogleAPI = require("./components/CallGoogleAPI")
 // const ChangeEmail = require("./components/ChangeEmail");
 
 const app = express();
@@ -80,6 +81,8 @@ app.get("/", (req, res) => {
   // server health check on the localhost port
   res.send("200 OK");
 });
+
+app.post("/api/google-login", CallGoogleAPI);
 
 app.get("/messages", Messages);
 
