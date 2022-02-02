@@ -43,6 +43,13 @@ const LoginValidation = async (req, res) => {
         return err;
       }
 
+      if (data.length === 0) {
+        res.send({
+          validCred: false
+        })
+        return
+      }
+
       // comparing the db and input passwords
       console.log("encrypt db pass:", data[0].password);
       console.log("encrypt reqData.password:", reqData.password);

@@ -1,6 +1,7 @@
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 const Account = require("../models/AccountObject");
+const Signup = require("./SignUp");
 
 // const upsert = () => {
 // find email in database, if cannot find then insert it
@@ -68,7 +69,9 @@ async function CallGoogleAPI(req, res) {
           chatrooms: new Array(),
           username: String(name),
           email: String(email),
-          googleId: String(sub)
+          googleId: String(sub),
+          confirmed: Boolean(true)
+
           // password: String(reqData.password),
           // lastModified: String(reqData.lastModified),
         };
@@ -86,14 +89,9 @@ async function CallGoogleAPI(req, res) {
             owner: data._id,
           });
         });
-        // console.log("Account NOT Found:", reqData);
       }
     }
   );
-
-  //   upsert(users, { name, email, picture });
-  //   res.status(201);
-  //   res.json({ name, email });
   return;
 }
 
