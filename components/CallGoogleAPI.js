@@ -1,17 +1,6 @@
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 const Account = require("../models/AccountObject");
-const Signup = require("./SignUp");
-
-// const upsert = () => {
-// find email in database, if cannot find then insert it
-// };
-
-// need to see if the user exists in the database
-// if exist, provide the information from the database such as chatrooms and messages and etc
-// if doesn't exist, create a new account in the DB
-// then next step is to change React to put information onto its authSlice and etc
-// but for now I will focus on more backend stuff to make sure it works first
 
 async function CallGoogleAPI(req, res) {
   const { token } = req.body;
@@ -31,15 +20,12 @@ async function CallGoogleAPI(req, res) {
   Account.find(
     {
       email: email,
-      // , password: reqData.password
     },
     function (err, data) {
       if (err) {
-        // console.log(err);
         return err;
       }
       if (data.length === 1) {
-        // data[0].confirmed === true;
         console.log("Account Found:", data[0]);
 
         if (data[0].confirmed === true) {
@@ -61,19 +47,12 @@ async function CallGoogleAPI(req, res) {
         }
       } else {
         // insert into MongoDB
-        // res.send({ validCred: "false" });
-
-        // i might be able to use Signup.js since what i'm doing here is the same as that
-        // except I wrote it separately for now without intergrating it until I find that everything works
         let convertReqData = {
           chatrooms: new Array(),
           username: String(name),
           email: String(email),
           googleId: String(sub),
-          confirmed: Boolean(true)
-
-          // password: String(reqData.password),
-          // lastModified: String(reqData.lastModified),
+          confirmed: Boolean(true),
         };
 
         Account.create(convertReqData, function (err, data) {

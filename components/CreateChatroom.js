@@ -2,16 +2,14 @@ const Chatroom = require("../models/ChatroomObject");
 const Account = require("../models/AccountObject");
 
 const CreateChatroom = (req, res) => {
-  // console.log("Inside Create Chatroom...");
   let reqData = req.body;
 
   // finding the email that is being requested to create an account
   function createChatRoom(err, data) {
     if (err) {
-      // console.log(err);
     }
 
-	// if the account is found, then it would create a new chatroom in chatroomCollection
+    // if the account is found, then it would create a new chatroom in chatroomCollection
     Account.find({ _id: reqData.owner }, function (err, data) {
       if (err) {
         throw err;
@@ -22,14 +20,11 @@ const CreateChatroom = (req, res) => {
           creatorOwnerID: String(reqData.owner),
           chatroomName: String(reqData.chatroomName),
           members: [reqData.owner],
-          // lastModified: Number(reqData.lastModified),
         };
 
-		// Chatroom collection creates a new document
+        // Chatroom collection creates a new document
         Chatroom.create(convertReqData, function (err, data) {
           if (err) throw err;
-
-          // console.log("Chatroom data:", data);
 
           res.send({
             validCred: "true",
@@ -38,24 +33,16 @@ const CreateChatroom = (req, res) => {
 
           Account.findByIdAndUpdate(
             { _id: convertReqData.creatorOwnerID },
-			// data._id is from the chatroom that was created. so after creating chatroom, it gives its ObjectId to Account
+            // data._id is from the chatroom that was created. so after creating chatroom, it gives its ObjectId to Account
             { $push: { chatrooms: data._id } }
           )
-            .then((res) => 
-            // console.log("res:", res)
-            res
-            )
-            .catch((err) => 
-            // console.log("err:", err)
-            err
-            );
+            .then((res) => res)
+            .catch((err) => err);
         });
       } else {
         res.send({ validCred: "false" });
-        // console.log("Account NOT Found, Cannot Update:", reqData);
       }
     });
-    // console.log("reqData:", reqData);
   }
 
   createChatRoom();

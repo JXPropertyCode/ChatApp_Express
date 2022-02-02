@@ -2,7 +2,6 @@ const Account = require("../models/AccountObject");
 const CryptoJS = require("crypto-js");
 
 const LoginValidation = async (req, res) => {
-  // console.log("Inside Login Validation...");
   let reqData = req.body;
 
   // try {
@@ -27,7 +26,6 @@ const LoginValidation = async (req, res) => {
     var bytes = CryptoJS.AES.decrypt(input, process.env.CRYPTO_JS_SECRET_KEY);
     var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
-    // console.log("originalText:", originalText);
     return originalText;
   };
 
@@ -35,19 +33,17 @@ const LoginValidation = async (req, res) => {
   Account.find(
     {
       email: reqData.email,
-      // , password: reqData.password
     },
     function (err, data) {
       if (err) {
-        // console.log(err);
         return err;
       }
 
       if (data.length === 0) {
         res.send({
-          validCred: false
-        })
-        return
+          validCred: false,
+        });
+        return;
       }
 
       // comparing the db and input passwords
@@ -57,10 +53,7 @@ const LoginValidation = async (req, res) => {
       const decryptDBPass = decrypt(data[0].password);
       const decryptReqPass = decrypt(reqData.password);
 
-      // console.log("data[0]:", data[0]);
-
       if (data.length === 1 && decryptDBPass === decryptReqPass) {
-        // data[0].confirmed === true;
         console.log("Account Found:", reqData);
 
         if (data[0].confirmed === true) {
@@ -79,9 +72,8 @@ const LoginValidation = async (req, res) => {
           });
         }
       } else {
-        // insert into MongoDB
+        // if the passwords don't match then send invalid credentials
         res.send({ validCred: "false" });
-        // console.log("Account NOT Found:", reqData);
       }
     }
   );

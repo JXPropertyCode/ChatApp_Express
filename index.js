@@ -10,7 +10,6 @@ const WebSocket = require("ws");
 const Message = require("./models/MessageObject");
 const Account = require("./models/AccountObject");
 const Chatroom = require("./models/ChatroomObject");
-// const { findOne } = require("./models/MessageObject");
 
 // const emailController = require("./components/Email/Controller");
 
@@ -29,7 +28,7 @@ const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
 const GetUsernameByUserId = require("./components/GetUsernameByUserId");
-const CallGoogleAPI = require("./components/CallGoogleAPI")
+const CallGoogleAPI = require("./components/CallGoogleAPI");
 // const ChangeEmail = require("./components/ChangeEmail");
 
 const app = express();
@@ -38,12 +37,10 @@ app.use(cors("*"));
 
 //initialize a simple http server
 const server = http.createServer(app);
-// console.log("server:", server);
 
 //initialize the WebSocket server instance
 // OG
 const wss = new WebSocket.Server({ server: server });
-// console.log("wss:", wss)
 
 const url = process.env.MONGODB_URL;
 
@@ -181,35 +178,24 @@ wss.on("connection", (ws, req) => {
   // update teh chatRoomClient's array with the newly added user array
   chatroomClients[roomId] = clients;
 
-  chatroomClients[roomId].forEach(
-    (client) =>
-      // console.log("chatroomClients[roomId]: ", client.userId)
-      client
-  );
+  chatroomClients[roomId].forEach((client) => client);
 
   ws.on("close", function close() {
     // on close, aka disconnect, the chatRoomClient would filter that specific userId from the array
     chatroomClients[roomId] = chatroomClients[roomId].filter(
       (client) => client.userId !== userId
     );
-    // console.log("user id on closed target user Id", userId);
 
     // outputs the remaining clients in the ws connection
     if (chatroomClients[roomId]) {
-      chatroomClients[roomId].forEach(
-        (client) =>
-          // console.log("remaining: ", client.userId)
-          client
-      );
+      chatroomClients[roomId].forEach((client) => client);
     }
   });
 
   // connection is up, let's add a simple simple event
   ws.on("message", (message) => {
-    // console.log("message received:", JSON.parse(message));
     // log the received message and send it back to the client
     let messageParse = JSON.parse(message);
-    // console.log("Received from Client:", messageParse);
 
     // validated username and password
     let convertResData = new Message({
@@ -217,8 +203,6 @@ wss.on("connection", (ws, req) => {
       owner: messageParse.owner.toString(),
       username: messageParse.username.toString(),
       email: messageParse.email.toString(),
-      // password: messageParse.password.toString(),
-      // lastModified: Number(messageParse.lastModified),
       clientMessage: messageParse.clientMessage.toString(),
     });
 
@@ -227,21 +211,15 @@ wss.on("connection", (ws, req) => {
       {
         _id: convertResData.owner,
         email: convertResData.email,
-        // password: convertResData.password,
       },
       function (err, data) {
         if (err) {
-          // console.log("err:", err);
           return err;
         } else {
-          // console.log("Data Found in req.query.room:", data);
-
           Message.create(convertResData, function (err, newMessage) {
             if (err) throw err;
-            // console.log("newMessage", newMessage);
             Message.findById({ _id: newMessage._id }, function (err, data) {
               if (err) {
-                // console.log("err:", err);
               } else {
                 // broadcast to clients in teh chatroomClients
                 chatroomClients[messageParse.room.toString()].forEach(
