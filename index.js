@@ -27,7 +27,7 @@ const CreateChatroom = require("./components/CreateChatroom");
 const GetChatroomMembers = require("./components/GetChatroomMembers");
 const LeaveChatroom = require("./components/LeaveChatroom");
 const ChangeUsername = require("./components/ChangeUsername");
-const GetUsernameByUserId = require("./components/GetUsernameByUserId");
+const GetChatroomName = require("./components/GetChatroomName");
 const CallGoogleAPI = require("./components/CallGoogleAPI");
 // const ChangeEmail = require("./components/ChangeEmail");
 
@@ -147,7 +147,7 @@ app.post("/leave-chatroom", LeaveChatroom);
 
 app.post("/change-username", ChangeUsername);
 
-app.post("/get-username-by-user-id", GetUsernameByUserId);
+app.post("/get-chatroom-name", GetChatroomName);
 
 // hashmap, key is room id, value is clients array. Keeps tracks of the speicifc clients in the room/ws
 // this fixes duplicating instances of connections. Where a user can connect many times and it would have it in its memory
