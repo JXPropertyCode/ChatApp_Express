@@ -81,10 +81,10 @@ app.get("/", (req, res) => {
 
 app.post("/api/google-login", CallGoogleAPI);
 
-app.get("/api/google-login", (req, res) => {
-  // server health check on the localhost port
-  res.send("200 OK");
-});
+// app.get("/api/google-login", (req, res) => {
+//   // server health check on the localhost port
+//   res.send("200 OK");
+// });
 
 app.get("/messages", Messages);
 
