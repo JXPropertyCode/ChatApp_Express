@@ -11,10 +11,10 @@ async function CallGoogleAPI(req, res) {
 
   // get the users information
   const { name, email, sub } = ticket.getPayload();
-  console.log("ticket.getPayload():", ticket.getPayload());
-  console.log("name:", name);
-  console.log("email:", email);
-  console.log("googleId:", sub);
+  // console.log("ticket.getPayload():", ticket.getPayload());
+  // console.log("name:", name);
+  // console.log("email:", email);
+  // console.log("googleId:", sub);
 
   // finding the email that is being requested to create an account
   Account.find(
@@ -26,7 +26,7 @@ async function CallGoogleAPI(req, res) {
         return err;
       }
       if (data.length === 1) {
-        console.log("Account Found:", data[0]);
+        // console.log("Account Found:", data[0]);
 
         if (data[0].confirmed === true) {
           res.send({
@@ -58,7 +58,7 @@ async function CallGoogleAPI(req, res) {
         Account.create(convertReqData, function (err, data) {
           if (err) throw err;
 
-          console.log("data:", data);
+          // console.log("data:", data);
 
           res.send({
             validCred: "true",

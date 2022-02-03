@@ -47,14 +47,14 @@ const LoginValidation = async (req, res) => {
       }
 
       // comparing the db and input passwords
-      console.log("encrypt db pass:", data[0].password);
-      console.log("encrypt reqData.password:", reqData.password);
+      // console.log("encrypt db pass:", data[0].password);
+      // console.log("encrypt reqData.password:", reqData.password);
 
       const decryptDBPass = decrypt(data[0].password);
       const decryptReqPass = decrypt(reqData.password);
 
       if (data.length === 1 && decryptDBPass === decryptReqPass) {
-        console.log("Account Found:", reqData);
+        // console.log("Account Found:", reqData);
 
         if (data[0].confirmed === true) {
           res.send({
