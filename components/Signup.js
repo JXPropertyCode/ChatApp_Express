@@ -29,7 +29,7 @@ const Signup = async (req, res) => {
   // });
 
   // finding the email that is being requested to create an account
-  const account = await Account.find({ email: reqData.email });
+  const account = await Account.findOne({ email: reqData.email });
 
   // if account is already created, it is invalid to create another one
   if (account) {
