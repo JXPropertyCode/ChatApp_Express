@@ -32,10 +32,12 @@ const Signup = async (req, res) => {
   const account = await Account.find({ email: reqData.email });
 
   // if account is already created, it is invalid to create another one
-  if (!account) {
-    res.send({ validCred: "true" });
+  if (account) {
+    res.send({ validCred: "false" });
     return;
   }
+
+  res.send({ validCred: "true" });
 
   // insert into MongoDB
   const createAccount = await Account.create(
@@ -46,8 +48,6 @@ const Signup = async (req, res) => {
       return data;
     }
   );
-
-  res.send({ validCred: "false" });
 };
 
 module.exports = Signup;
