@@ -33,7 +33,7 @@ const Signup = async (req, res) => {
 
   // if account is already created, it is invalid to create another one
   if (account) {
-    res.send({ validCred: "false" });
+    res.send({ validCred: "false", result: account });
     return;
   }
 
