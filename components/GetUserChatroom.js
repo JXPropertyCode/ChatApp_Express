@@ -6,25 +6,40 @@ const GetUserChatroom = async (req, res) => {
 
   let userChatrooms = [];
 
-  let getUserChatrooms = await Account.find({
-    email: reqData.email,
-  })
-    .then((data) => {
-      return data[0].chatrooms;
-    })
-    .catch((err) => err);
+  const getUserChatrooms = await Account.findOne({
+    _id: reqData._id,
+  });
 
-  for (let i = 0; i < getUserChatrooms.length; i++) {
-    await Chatroom.find({ _id: getUserChatrooms[i] })
-      .then((data) => {
-        userChatrooms.push({
-          chatroomId: data[0]._id,
-          chatroomName: data[0].chatroomName,
-        });
-      })
-      .catch((err) => err);
+  if (!getUserChatrooms) {
+    // res.send("Error Cannot Get Chatroom from User:", reqData._id)
+    res.send(userChatrooms);
   }
 
+  const extractUserChatrooms = getUserChatrooms.chatrooms;
+
+  // console.log("extractUserChatrooms:", extractUserChatrooms);
+
+  for (let i = 0; i < extractUserChatrooms.length; i++) {
+    // finds the chatroom based on the _id and send React its id and name so the user can identify the chatrooms
+    const chatroom = await Chatroom.findOne({ _id: extractUserChatrooms[i] });
+    // console.log("chatroom:", chatroom);
+
+    // console.log("chatroom:", chatroom)
+
+    // since if chatroom === null then you cannot res.send() you must say continue for this to work
+    // this is for if the chatroom doesn't exist but still inside the account collection's chatroom array
+    if (!chatroom) {
+      continue;
+    }
+
+    userChatrooms.push({
+      chatroomId: chatroom._id,
+      chatroomName: chatroom.chatroomName,
+    });
+  }
+
+  // console.log("userChatrooms:", userChatrooms)
+  // sends React all the chatrooms
   res.send(userChatrooms);
 };
 

@@ -4,15 +4,16 @@ const Chatroom = require("../models/ChatroomObject");
 const GetChatroomName = async (req, res) => {
   let reqData = req.body;
 
-  const getChatroomName = await Chatroom.find({
+  const getChatroomName = await Chatroom.findOne({
     _id: reqData.chatroomId,
-  })
-    .then((data) => {
-      return data[0].chatroomName;
-    })
-    .catch((err) => err);
+  });
 
-  res.send({ chatroomName: getChatroomName });
+  if (!getChatroomName) {
+    res.send({ message: "Failed To Get Chatroom Name" });
+    return;
+  }
+
+  res.send({ chatroomName: getChatroomName.chatroomName });
   return;
 };
 

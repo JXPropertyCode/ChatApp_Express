@@ -11,22 +11,38 @@ const GetChatroomMembers = async (req, res) => {
   // could possibly persist in callback hell that is why I use this way as a promise
 
   // see if the chatroom exists
-  let chatroomData = await Chatroom.find({ _id: currentChatroom })
-    .then((data) => data)
-    .catch((err) => err);
+  const chatroomData = await Chatroom.findOne({ _id: currentChatroom });
 
-  if (chatroomData.length === 1) {
-    // if chatroom exists, find the _id of the members then get their user name then send it back to React to output it
-    for (let i = 0; i < chatroomData[0].members.length; i++) {
-      await Account.find({ _id: chatroomData[0].members[i] })
-        .then((data) => {
-          membersInChatroom.push(data[0]);
-          return data[0];
-        })
-        .catch((err) => err);
-    }
+  if (!chatroomData) {
+    res.send({
+      membersInChatroom: membersInChatroom,
+      error: "Cannot Get Chatroom Members",
+    });
+    return;
   }
 
+  // console.log("chatroomData:", chatroomData);
+
+  // if chatroom exists, find the _id of the members then get their user name then send it back to React to output it
+  for (let i = 0; i < chatroomData.members.length; i++) {
+    const accountFound = await Account.findOne({
+      _id: chatroomData.members[i],
+    });
+
+    if (!accountFound) {
+      console.log("Account Not Found...");
+      continue;
+    }
+
+    // console.log("accountFound:", accountFound);
+
+    membersInChatroom.push({
+      username: accountFound.username,
+      owner: accountFound._id,
+    });
+  }
+
+  // console.log("membersInChatroom:", membersInChatroom);
   res.send({
     membersInChatroom: membersInChatroom,
   });

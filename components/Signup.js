@@ -1,6 +1,6 @@
 const Account = require("../models/AccountObject");
 
-const Signup = (req, res) => {
+const Signup = async (req, res) => {
   let reqData = req.body;
 
   let convertReqData = {
@@ -10,23 +10,44 @@ const Signup = (req, res) => {
     password: String(reqData.password),
   };
 
+  // // finding the email that is being requested to create an account
+  // Account.find({ email: reqData.email }, function (err, data) {
+  //   if (err) {
+  //     return err;
+  //   }
+
+  //   if (data.length > 0) {
+  //     res.send({ validCred: "false" });
+  //   } else {
+  //     res.send({ validCred: "true" });
+
+  //     // insert into MongoDB
+  //     Account.create(convertReqData, function (err) {
+  //       if (err) throw err;
+  //     });
+  //   }
+  // });
+
   // finding the email that is being requested to create an account
-  Account.find({ email: reqData.email }, function (err, data) {
-    if (err) {
-      return err;
-    }
+  const account = await Account.find({ email: reqData.email });
 
-    if (data.length > 0) {
-      res.send({ validCred: "false" });
-    } else {
-      res.send({ validCred: "true" });
+  // if account is already created, it is invalid to create another one
+  if (account) {
+    res.send({ validCred: "false" });
+    return;
+  }
 
-      // insert into MongoDB
-      Account.create(convertReqData, function (err) {
-        if (err) throw err;
-      });
+  // insert into MongoDB
+  const createAccount = await Account.create(
+    convertReqData,
+    function (err, data) {
+      if (err) throw err;
+      console.log("data:", data);
+      return data;
     }
-  });
+  );
+
+  res.send({ validCred: "true" });
 };
 
 module.exports = Signup;
